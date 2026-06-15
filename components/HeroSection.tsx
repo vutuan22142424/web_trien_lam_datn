@@ -74,7 +74,7 @@ export function HeroSection() {
               <Button className="bg-blue-600 hover:bg-blue-500 text-white h-12 px-7 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] shadow-[0_0_24px_rgba(59,130,246,0.2)]">
                 <Play className="mr-2 w-4 h-4" /> BẮT ĐẦU THAM QUAN
               </Button>
-              <Button variant="outline" className="border-white/10 text-white/70 hover:text-white hover:bg-white/[0.04] h-12 px-7 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]">
+              <Button variant="outline" className="bg-transparent border-white/10 text-white/70 hover:text-white hover:bg-white/[0.04] h-12 px-7 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]">
                 <BookOpen className="mr-2 w-4 h-4" /> HƯỚNG DẪN THAM QUAN
               </Button>
             </div>

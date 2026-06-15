@@ -81,7 +81,7 @@ export function BrandHighlights() {
                 <Button className="bg-blue-600 hover:bg-blue-500 text-white h-10 px-6 rounded-lg text-xs font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98] group">
                   Xem chi tiết gian hàng <ArrowRight className="ml-2 w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
                 </Button>
-                <Button variant="outline" className="border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.04] h-10 px-6 rounded-lg text-xs font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]">
+                <Button variant="outline" className="bg-transparent border-white/10 text-white/50 hover:text-white/80 hover:bg-white/[0.04] h-10 px-6 rounded-lg text-xs font-medium transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]">
                   Trải nghiệm ngay
                 </Button>
               </div>
