@@ -201,7 +201,7 @@ export function VirtualExpo() {
   const bottomBooths = booths.slice(5);
 
   return (
-    <section id="trien-lam" className="expo-map-section relative overflow-hidden pb-8">
+    <section id="trien-lam" className="expo-map-section relative overflow-hidden pb-8 pt-24 sm:pt-28">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
         <div data-reveal style={{ '--reveal-delay': '90ms' } as CSSProperties} className="min-w-0">
           <div className="overflow-x-auto border border-slate-200 bg-white p-2 shadow-[0_22px_54px_rgba(15,23,42,0.14)]">
