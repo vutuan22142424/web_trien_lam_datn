@@ -169,7 +169,9 @@ function EntryGate({ label, align = 'left' }: { label: string; align?: 'left' | 
 function RobotGuide({ className = '' }: { className?: string }) {
   return (
     <div className={`expo-robot ${className}`}>
-      <img src="/images/robot-guide.png" alt="Robot guide" className="h-full w-full object-contain" />
+      <div className="expo-robot-core" aria-label="Robot guide">
+        <Bot className="h-6 w-6" />
+      </div>
     </div>
   );
 }
@@ -179,41 +181,36 @@ function BoothCard({ booth, position }: { booth: Booth; position: 'top' | 'botto
     '--booth-accent': booth.accent,
     '--booth-deep': booth.deep,
     '--booth-soft': booth.soft,
+    '--booth-image': `url(${booth.image})`,
   } as CSSProperties;
 
   return (
     <article
-      className={`expo-booth motion-card group ${position === 'top' ? 'expo-booth-top min-h-[188px]' : 'expo-booth-bottom min-h-[174px]'}`}
+      className={`expo-booth motion-card group ${position === 'top' ? 'expo-booth-top min-h-[164px]' : 'expo-booth-bottom min-h-[154px]'}`}
       style={style}
     >
       <div className="absolute inset-x-3 top-0 h-1.5 rounded-b-full bg-white/65 shadow-[0_0_18px_rgba(255,255,255,0.9)]" />
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div className="grid h-12 w-12 place-items-center rounded-full bg-white p-2.5 shadow-[0_12px_26px_rgba(15,23,42,0.22),inset_0_1px_0_rgba(255,255,255,0.9)]">
-            <img src={booth.logo} alt={`${booth.brand} logo`} className="h-full w-full object-contain" />
-          </div>
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-white/74">{booth.id}</p>
-            <p className="mt-1 text-base font-black leading-none text-white drop-shadow-sm">{booth.brand}</p>
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5 rounded-full bg-white/16 px-2.5 py-1 text-[11px] font-bold text-white/78">
-          <Eye className="h-3 w-3" />
-          {booth.visitors}
-        </div>
+      <div className="absolute right-3 top-3 z-[2] rounded-full bg-white/15 px-2.5 py-1 text-[10px] font-black tracking-[0.14em] text-white/82">
+        {booth.id}
       </div>
 
-      <div className="mt-3 grid grid-cols-[0.72fr_1fr] gap-3">
-        <div className="overflow-hidden rounded-[0.85rem] border border-white/20 bg-white/10 shadow-[inset_0_1px_0_rgba(255,255,255,0.18)]">
-          <img
-            src={booth.image}
-            alt={`Không gian gian hàng ${booth.brand}`}
-            className="h-20 w-full object-cover opacity-90 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:scale-105"
-          />
+      <div className="grid h-full grid-cols-[0.42fr_0.58fr] gap-3">
+        <div className="expo-booth-scene">
+          <div className="expo-booth-logo-plate">
+            <img src={booth.logo} alt={`${booth.brand} logo`} className="h-full w-full object-contain" />
+          </div>
         </div>
-        <div className="flex min-w-0 flex-col">
-          <h3 className="text-xs font-black leading-tight text-white">{booth.name}</h3>
-          <p className="mt-1.5 line-clamp-2 text-[11px] leading-5 text-white/68">{booth.desc}</p>
+
+        <div className="flex min-w-0 flex-col py-1 pr-1">
+          <div>
+            <p className="text-base font-black leading-none text-white drop-shadow-sm">{booth.brand}</p>
+            <h3 className="mt-2 text-xs font-black leading-tight text-white">{booth.name}</h3>
+          </div>
+          <div className="mt-2 flex w-max items-center gap-1.5 rounded-full bg-white/14 px-2.5 py-1 text-[10px] font-bold text-white/74">
+            <Eye className="h-3 w-3" />
+            {booth.visitors}
+          </div>
+          <p className="mt-2 line-clamp-2 text-[11px] leading-5 text-white/68">{booth.desc}</p>
           <button className="mt-auto inline-flex w-max items-center gap-2 rounded-[0.75rem] bg-white/16 px-3 py-2 text-[11px] font-bold text-white transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/24 active:scale-[0.98]">
             Khám phá
             <ArrowRight className="h-3.5 w-3.5 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1" />
@@ -232,7 +229,7 @@ export function VirtualExpo() {
     <section id="trien-lam" className="expo-hero-light relative overflow-hidden pb-16 pt-24 sm:pb-20 sm:pt-28">
       <div className="absolute right-0 top-12 hidden h-48 w-48 translate-x-1/4 rounded-full bg-blue-200/45 blur-3xl lg:block" />
       <div className="mx-auto max-w-[1480px] px-4 sm:px-6">
-        <div data-reveal className="mb-4 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="sr-only">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-700">
               Future Consumer Expo 2026
