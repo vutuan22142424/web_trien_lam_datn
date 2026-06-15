@@ -162,7 +162,7 @@ function RobotGuide({ className = '' }: { className?: string }) {
   );
 }
 
-function BoothCard({ booth, position }: { booth: Booth; position: 'top' | 'bottom' }) {
+function BoothCard({ booth }: { booth: Booth }) {
   const style = {
     '--booth-accent': booth.accent,
     '--booth-deep': booth.deep,
@@ -171,22 +171,22 @@ function BoothCard({ booth, position }: { booth: Booth; position: 'top' | 'botto
   } as CSSProperties;
 
   return (
-    <article className={`expo-booth motion-card group ${position === 'top' ? 'min-h-[146px]' : 'min-h-[136px]'}`} style={style}>
-      <span className="absolute right-3 top-2 z-[2] font-mono text-sm font-black leading-none text-white/92 tabular-nums">
+    <article className="expo-booth motion-card group min-h-[178px]" style={style}>
+      <span className="absolute left-3 top-4 z-[2] font-mono text-sm font-black leading-none text-white/92 tabular-nums">
         {booth.id}
       </span>
-      <div className="grid h-full grid-cols-[0.42fr_0.58fr] gap-3">
+      <div className="grid h-full grid-cols-[0.4fr_0.6fr] gap-3">
         <div className="expo-booth-scene">
           <div className="expo-booth-logo-plate">
             <img src={booth.logo} alt={`${booth.brand} logo`} className="h-full w-full object-contain" />
           </div>
         </div>
 
-        <div className="flex min-w-0 flex-col py-1 pr-1">
-          <h3 className="max-w-[13ch] text-sm font-black leading-tight text-white drop-shadow-sm">{booth.brand}</h3>
-          <p className="mt-1 line-clamp-2 text-[11px] font-bold leading-4 text-white/88">{booth.name}</p>
-          <p className="mt-2 line-clamp-2 text-[10px] font-medium leading-4 text-white/72">{booth.desc}</p>
-          <button className="mt-auto inline-flex w-max items-center gap-2 rounded-[0.35rem] border border-white/18 bg-white/9 px-3 py-1.5 text-[10px] font-black text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/18 active:scale-[0.98]">
+        <div className="flex min-w-0 flex-col py-3 pr-2">
+          <h3 className="text-[15px] font-black leading-tight text-white drop-shadow-sm">{booth.brand}</h3>
+          <p className="mt-1 line-clamp-2 text-[11px] font-bold leading-4 text-white/90">{booth.name}</p>
+          <p className="mt-3 line-clamp-2 text-[11px] font-medium leading-5 text-white/72">{booth.desc}</p>
+          <button className="mt-auto inline-flex w-max items-center gap-2 rounded-[0.35rem] border border-white/22 bg-white/12 px-3 py-1.5 text-[10px] font-black text-white transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-white/20 active:scale-[0.98]">
             Khám phá
             <ArrowRight className="h-3 w-3 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-1" />
           </button>
@@ -205,7 +205,7 @@ export function VirtualExpo() {
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
         <div data-reveal style={{ '--reveal-delay': '90ms' } as CSSProperties} className="min-w-0">
           <div className="overflow-x-auto border border-slate-200 bg-white p-2 shadow-[0_22px_54px_rgba(15,23,42,0.14)]">
-            <div className="expo-floor-shell min-w-[1160px] p-4">
+            <div className="expo-floor-shell min-w-[1280px] p-4">
               <div className="mb-3 flex items-start justify-between gap-4">
                 <div>
                   <h2 className="text-sm font-black uppercase tracking-[0.02em] text-white">Sơ đồ triển lãm</h2>
@@ -218,14 +218,14 @@ export function VirtualExpo() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[150px_repeat(5,minmax(165px,1fr))] gap-2">
+              <div className="grid grid-cols-[150px_repeat(5,minmax(0,1fr))] gap-2">
                 <UtilityBlock />
                 {topBooths.map((booth) => (
-                  <BoothCard key={booth.id} booth={booth} position="top" />
+                  <BoothCard key={booth.id} booth={booth} />
                 ))}
               </div>
 
-              <div className="expo-corridor relative my-2 min-h-[92px] overflow-hidden border-y-4 border-[#173f48]/95 bg-white">
+              <div className="expo-corridor relative my-2 min-h-[88px] overflow-hidden border-y-4 border-[#173f48]/95 bg-white">
                 <div className="expo-floor-grid absolute inset-0" />
                 <div className="absolute left-4 top-1/2 -translate-y-1/2">
                   <EntryGate label="Vào cổng" />
@@ -260,12 +260,10 @@ export function VirtualExpo() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-[150px_repeat(3,minmax(230px,1fr))_150px] gap-2">
-                <div className="bg-[#071425]" />
+              <div className="grid grid-cols-3 gap-2">
                 {bottomBooths.map((booth) => (
-                  <BoothCard key={booth.id} booth={booth} position="bottom" />
+                  <BoothCard key={booth.id} booth={booth} />
                 ))}
-                <div className="bg-[#071425]" />
               </div>
             </div>
           </div>
