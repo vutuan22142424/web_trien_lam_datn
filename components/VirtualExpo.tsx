@@ -2,16 +2,17 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ChevronLeft, ChevronRight, MapPin, Activity, User } from 'lucide-react';
+import Image from 'next/image';
 
 const booths = [
-  { id: '01', name: 'Coca-Cola Experience Hub', brand: 'Coca-Cola', desc: 'Trải nghiệm cá nhân hóa đồ uống bằng AI.', color: 'bg-red-700' },
-  { id: '02', name: 'Pepsi Interactive Lab', brand: 'PEPSI', desc: 'Tương tác thông minh, kết nối khách hàng.', color: 'bg-blue-800' },
-  { id: '03', name: 'Heineken Future Brewing', brand: 'Heineken', desc: 'Công nghệ ủ bia thông minh.', color: 'bg-green-800' },
-  { id: '04', name: 'Tiger Smart Distribution', brand: 'Tiger', desc: 'Logistics thông minh, tối ưu chuỗi cung ứng.', color: 'bg-blue-900' },
-  { id: '05', name: 'Sabeco Industry Pavilion', brand: 'SABECO', desc: 'Đổi mới ngành đồ uống Việt Nam.', color: 'bg-yellow-600' },
-  { id: '06', name: 'Abbott Healthcare', brand: 'Abbott', desc: 'Giải pháp chăm sóc sức khỏe tiên tiến.', color: 'bg-sky-600' },
-  { id: '07', name: 'Nutifood Nutrition Lab', brand: 'Nutifood', desc: 'Dinh dưỡng cá nhân hóa dựa trên dữ liệu.', color: 'bg-emerald-600' },
-  { id: '08', name: 'Vinamilk Future Zone', brand: 'Vinamilk', desc: 'Công nghệ sản xuất sữa thông minh thế hệ mới.', color: 'bg-blue-600' },
+  { id: '01', name: 'Coca-Cola Experience Hub', brand: 'Coca-Cola', desc: 'Trải nghiệm cá nhân hóa đồ uống bằng AI.', color: 'bg-red-700', logo: 'https://logo.clearbit.com/coca-cola.com' },
+  { id: '02', name: 'Pepsi Interactive Lab', brand: 'PEPSI', desc: 'Tương tác thông minh, kết nối khách hàng.', color: 'bg-blue-800', logo: 'https://logo.clearbit.com/pepsi.com' },
+  { id: '03', name: 'Heineken Future Brewing', brand: 'Heineken', desc: 'Công nghệ ủ bia thông minh.', color: 'bg-green-800', logo: 'https://logo.clearbit.com/heineken.com' },
+  { id: '04', name: 'Tiger Smart Distribution', brand: 'Tiger', desc: 'Logistics thông minh, tối ưu chuỗi cung ứng.', color: 'bg-blue-900', logo: 'https://logo.clearbit.com/tigerbeer.com' },
+  { id: '05', name: 'Sabeco Industry Pavilion', brand: 'SABECO', desc: 'Đổi mới ngành đồ uống Việt Nam.', color: 'bg-yellow-600', logo: 'https://logo.clearbit.com/sabeco.com.vn' },
+  { id: '06', name: 'Abbott Healthcare', brand: 'Abbott', desc: 'Giải pháp chăm sóc sức khỏe tiên tiến.', color: 'bg-sky-600', logo: 'https://logo.clearbit.com/abbott.com' },
+  { id: '07', name: 'Nutifood Nutrition Lab', brand: 'Nutifood', desc: 'Dinh dưỡng cá nhân hóa dựa trên dữ liệu.', color: 'bg-emerald-600', logo: 'https://logo.clearbit.com/nutifood.com.vn' },
+  { id: '08', name: 'Vinamilk Future Zone', brand: 'Vinamilk', desc: 'Công nghệ sản xuất sữa thông minh thế hệ mới.', color: 'bg-blue-600', logo: 'https://logo.clearbit.com/vinamilk.com.vn' },
 ];
 
 export function VirtualExpo() {
@@ -45,8 +46,8 @@ export function VirtualExpo() {
                 {booths.slice(0, 4).map((booth) => (
                   <div key={booth.id} className={`${booth.color} rounded-xl p-4 relative group cursor-pointer border border-white/10 hover:scale-105 transition-transform duration-300 shadow-lg`}>
                     <div className="absolute top-2 right-3 text-white/50 font-mono text-sm">{booth.id}</div>
-                    <div className="h-12 w-12 bg-white rounded-full flex items-center justify-center font-bold text-xs text-slate-800 mb-3 shadow-inner">
-                      {booth.brand}
+                    <div className="h-12 w-12 bg-white rounded flex items-center justify-center font-bold text-xs text-slate-800 mb-3 shadow-inner overflow-hidden p-1">
+                      <Image src={booth.logo} alt={booth.brand} width={40} height={40} className="object-contain w-full h-full" />
                     </div>
                     <h3 className="text-white font-bold text-sm leading-tight mb-1">{booth.name}</h3>
                     <p className="text-white/80 text-xs line-clamp-2 mb-4">{booth.desc}</p>
@@ -84,8 +85,8 @@ export function VirtualExpo() {
                 {booths.slice(4, 8).map((booth) => (
                   <div key={booth.id} className={`${booth.color} rounded-xl p-4 relative group cursor-pointer border border-white/10 hover:scale-105 transition-transform duration-300 shadow-lg`}>
                     <div className="absolute top-2 right-3 text-white/50 font-mono text-sm">{booth.id}</div>
-                    <div className="h-10 w-auto bg-white rounded flex items-center justify-center font-bold text-xs text-slate-800 mb-3 px-2 shadow-inner inline-block">
-                      {booth.brand}
+                    <div className="h-10 w-16 bg-white rounded flex items-center justify-center font-bold text-xs text-slate-800 mb-3 p-1 shadow-inner inline-block overflow-hidden">
+                      <Image src={booth.logo} alt={booth.brand} width={50} height={30} className="object-contain w-full h-full" />
                     </div>
                     <h3 className="text-white font-bold text-sm leading-tight mb-1">{booth.name}</h3>
                     <p className="text-white/80 text-xs line-clamp-2 mb-4">{booth.desc}</p>
