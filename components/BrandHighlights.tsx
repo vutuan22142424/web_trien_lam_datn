@@ -1,8 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import type { CSSProperties } from 'react';
-import { ArrowRight, Boxes, CalendarDays, Cpu, Globe2, Trophy } from 'lucide-react';
+import { useState, type CSSProperties } from 'react';
+import { ArrowRight, Boxes, CalendarDays, ChevronLeft, ChevronRight, Cpu, Globe2, Trophy } from 'lucide-react';
 
 type HighlightBooth = {
   id: string;
@@ -205,6 +205,14 @@ function BoothArticle({ booth, index }: { booth: HighlightBooth; index: number }
 }
 
 export function BrandHighlights() {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeBooth = booths[activeIndex];
+  const totalLabel = booths.length.toString().padStart(2, '0');
+
+  const goToBooth = (index: number) => {
+    setActiveIndex((index + booths.length) % booths.length);
+  };
+
   return (
     <section id="cong-nghe" className="expo-section-light relative overflow-hidden py-16 sm:py-20">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
@@ -220,11 +228,57 @@ export function BrandHighlights() {
           </p>
         </div>
 
-        <div className="space-y-6">
-          {booths.map((booth, index) => (
-            <BoothArticle key={booth.id} booth={booth} index={index} />
-          ))}
+        <div data-reveal className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => goToBooth(activeIndex - 1)}
+              className="grid h-11 w-11 place-items-center rounded-[0.85rem] border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 active:scale-[0.96]"
+              aria-label="Gian hàng trước"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+            <div className="min-w-[112px] rounded-[0.9rem] border border-slate-200 bg-white px-4 py-2.5 text-center shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+              <span className="font-mono text-sm font-black tabular-nums text-slate-950">
+                {activeBooth.id} / {totalLabel}
+              </span>
+              <p className="mt-0.5 text-[10px] font-black uppercase tracking-[0.16em] text-slate-400">Gian hàng</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => goToBooth(activeIndex + 1)}
+              className="grid h-11 w-11 place-items-center rounded-[0.85rem] border border-slate-200 bg-white text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.08)] transition-all duration-300 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-700 active:scale-[0.96]"
+              aria-label="Gian hàng tiếp theo"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+          </div>
+
+          <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+            {booths.map((booth, index) => {
+              const isActive = activeIndex === index;
+
+              return (
+                <button
+                  key={booth.id}
+                  type="button"
+                  onClick={() => goToBooth(index)}
+                  className={`shrink-0 rounded-[0.8rem] border px-3 py-2 text-left transition-all duration-300 active:scale-[0.98] ${
+                    isActive
+                      ? 'border-blue-200 bg-blue-50 text-blue-700 shadow-[0_12px_28px_rgba(37,99,235,0.12)]'
+                      : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-slate-950'
+                  }`}
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  <span className="font-mono text-[11px] font-black tabular-nums">{booth.id}</span>
+                  <span className="ml-2 text-xs font-black">{booth.brand}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        <BoothArticle booth={activeBooth} index={activeIndex} />
       </div>
     </section>
   );
