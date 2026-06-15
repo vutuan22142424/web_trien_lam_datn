@@ -26,7 +26,7 @@ const booths: Booth[] = [
     accent: '#dc1725',
     deep: '#68141a',
     image: '/images/booths/cocacola.webp',
-    className: 'left-[160px] top-[14px] h-[164px] w-[204px]',
+    className: 'left-[150px] top-[12px] h-[146px] w-[194px]',
     variant: 'top',
   },
   {
@@ -38,7 +38,7 @@ const booths: Booth[] = [
     accent: '#1357c8',
     deep: '#082345',
     image: '/images/booths/pepsi.webp',
-    className: 'left-[372px] top-[14px] h-[164px] w-[204px]',
+    className: 'left-[352px] top-[12px] h-[146px] w-[194px]',
     variant: 'top',
   },
   {
@@ -50,7 +50,7 @@ const booths: Booth[] = [
     accent: '#0b8c45',
     deep: '#05321e',
     image: '/images/booths/heineken.webp',
-    className: 'left-[584px] top-[14px] h-[164px] w-[204px]',
+    className: 'left-[554px] top-[12px] h-[146px] w-[194px]',
     variant: 'top',
   },
   {
@@ -62,7 +62,7 @@ const booths: Booth[] = [
     accent: '#d88211',
     deep: '#092b54',
     image: '/images/booths/tiger.webp',
-    className: 'left-[796px] top-[14px] h-[164px] w-[204px]',
+    className: 'left-[756px] top-[12px] h-[146px] w-[194px]',
     variant: 'top',
   },
   {
@@ -74,7 +74,7 @@ const booths: Booth[] = [
     accent: '#b88405',
     deep: '#102139',
     image: '/images/booths/sabeco.webp',
-    className: 'left-[1008px] top-[14px] h-[164px] w-[204px]',
+    className: 'left-[958px] top-[12px] h-[146px] w-[194px]',
     variant: 'top',
   },
   {
@@ -86,7 +86,7 @@ const booths: Booth[] = [
     accent: '#159bd3',
     deep: '#075985',
     image: '/images/booths/abbott.webp',
-    className: 'left-[242px] top-[252px] h-[142px] w-[236px]',
+    className: 'left-[244px] top-[224px] h-[122px] w-[220px]',
     variant: 'bottom',
   },
   {
@@ -98,7 +98,7 @@ const booths: Booth[] = [
     accent: '#0c9b61',
     deep: '#065f46',
     image: '/images/booths/nutifood.webp',
-    className: 'left-[492px] top-[252px] h-[142px] w-[236px]',
+    className: 'left-[480px] top-[224px] h-[122px] w-[220px]',
     variant: 'bottom',
   },
   {
@@ -110,15 +110,15 @@ const booths: Booth[] = [
     accent: '#1655d9',
     deep: '#11356f',
     image: '/images/booths/vinamilk.webp',
-    className: 'left-[742px] top-[252px] h-[142px] w-[236px]',
+    className: 'left-[716px] top-[224px] h-[122px] w-[220px]',
     variant: 'bottom',
   },
 ];
 
 function MapUtility() {
   return (
-    <div className="expo-map-utility absolute left-[24px] top-[70px] h-[108px] w-[114px]">
-      <div className="grid h-12 w-12 place-items-center rounded-[0.35rem] bg-white shadow-[0_10px_22px_rgba(15,23,42,0.16)]">
+    <div className="expo-map-utility absolute left-[24px] top-[64px] h-[96px] w-[108px]">
+      <div className="grid h-11 w-11 place-items-center rounded-[0.35rem] bg-white shadow-[0_10px_22px_rgba(15,23,42,0.16)]">
         <Toilet className="h-6 w-6 text-slate-900" strokeWidth={1.8} />
       </div>
       <span>Khu vệ sinh</span>
@@ -180,7 +180,7 @@ export function VirtualExpo() {
     <section id="trien-lam" className="expo-map-section relative overflow-hidden pb-8 pt-24 sm:pt-28">
       <div className="mx-auto max-w-[1400px] px-3 sm:px-6">
         <div className="overflow-x-auto border border-slate-200 bg-white p-1 shadow-[0_22px_54px_rgba(15,23,42,0.14)]">
-          <div data-reveal style={{ '--reveal-delay': '90ms' } as CSSProperties} className="expo-map-canvas relative h-[410px] min-w-[1220px] overflow-hidden">
+          <div data-reveal style={{ '--reveal-delay': '90ms' } as CSSProperties} className="expo-map-canvas relative h-[360px] min-w-[1180px] overflow-hidden">
             <div className="absolute left-4 top-4 z-[3]">
               <h2 className="text-sm font-black uppercase tracking-[0.02em] text-white">Sơ đồ triển lãm</h2>
               <p className="mt-2 text-[10px] font-medium text-slate-400">Click vào gian hàng để khám phá.</p>
@@ -192,28 +192,27 @@ export function VirtualExpo() {
               <BoothCard key={booth.id} booth={booth} />
             ))}
 
-            <div className="expo-map-corridor absolute left-0 top-[188px] h-[68px] w-full overflow-hidden">
+            <div className="expo-map-corridor absolute left-0 top-[166px] h-[58px] w-full overflow-hidden">
               <div className="expo-floor-grid absolute inset-0" />
               <EntryGate label="Gate A" className="left-[18px] top-1/2 -translate-y-1/2" />
               <EntryGate label="Gate B" className="right-[24px] top-1/2 -translate-y-1/2" />
 
-              <span className="expo-map-arrow left-[170px]">&rsaquo;&rsaquo;</span>
-              <span className="expo-map-arrow left-[274px]">&rsaquo;&rsaquo;</span>
-              <span className="expo-map-arrow right-[278px]">&lsaquo;&lsaquo;</span>
-              <span className="expo-map-arrow right-[172px]">&lsaquo;&lsaquo;</span>
+              <span className="expo-map-arrow left-[166px]">&rsaquo;&rsaquo;</span>
+              <span className="expo-map-arrow left-[254px]">&rsaquo;&rsaquo;</span>
+              <span className="expo-map-arrow right-[254px]">&lsaquo;&lsaquo;</span>
+              <span className="expo-map-arrow right-[166px]">&lsaquo;&lsaquo;</span>
 
-              <MapRobot className="left-[330px] top-1/2 -translate-y-1/2" />
-              <MapRobot className="right-[330px] top-1/2 -translate-y-1/2" />
+              <MapRobot className="left-[334px] top-1/2 -translate-y-1/2" />
+              <MapRobot className="right-[334px] top-1/2 -translate-y-1/2" />
 
-              <div className="expo-map-lane absolute left-1/2 top-1/2 w-[270px] -translate-x-1/2 -translate-y-1/2">
+              <div className="expo-map-lane absolute left-1/2 top-1/2 w-[250px] -translate-x-1/2 -translate-y-1/2">
                 <p>Smart Guided Experience Lane</p>
                 <span>Hệ thống dẫn đường tự động đang hoạt động</span>
               </div>
             </div>
 
-            <div className="expo-map-side-detail absolute bottom-[105px] left-[18px] h-[58px] w-[58px]" />
-            <div className="expo-map-plant absolute bottom-[100px] left-[134px]" />
-            <div className="expo-map-plant absolute bottom-[104px] right-[38px]" />
+            <div className="expo-map-plant absolute left-[132px] top-[232px]" />
+            <div className="expo-map-plant absolute right-[44px] top-[236px]" />
           </div>
         </div>
       </div>

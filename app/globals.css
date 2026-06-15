@@ -211,6 +211,12 @@ body {
   transition-delay: var(--reveal-delay, 0ms);
 }
 
+html:not(.motion-ready) [data-reveal] {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
 [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
@@ -341,7 +347,7 @@ body {
   content: "";
   position: absolute;
   inset: auto 18px 0;
-  height: 7px;
+  height: 6px;
   border-radius: 999px 999px 0 0;
   background: rgb(255 255 255 / 0.82);
   box-shadow:
@@ -351,23 +357,23 @@ body {
 
 .expo-map-booth-number {
   position: absolute;
-  right: 10px;
-  top: 8px;
+  right: 9px;
+  top: 7px;
   z-index: 3;
   font-family: var(--font-geist-mono), ui-monospace, monospace;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   color: rgb(255 255 255 / 0.86);
 }
 
 .expo-map-booth-logo {
   position: absolute;
-  left: 17px;
-  top: 18px;
+  left: 16px;
+  top: 16px;
   z-index: 3;
   display: grid;
-  width: 66px;
-  height: 34px;
+  width: 58px;
+  height: 30px;
   place-items: center;
 }
 
@@ -380,11 +386,11 @@ body {
 
 .expo-map-booth-thumb {
   position: absolute;
-  left: 18px;
-  bottom: 22px;
+  left: 16px;
+  bottom: 20px;
   z-index: 2;
-  width: 72px;
-  height: 72px;
+  width: 66px;
+  height: 62px;
   overflow: hidden;
   border: 1px solid rgb(255 255 255 / 0.22);
   border-radius: 0.2rem;
@@ -401,44 +407,44 @@ body {
 
 .expo-map-booth-copy {
   position: absolute;
-  left: 98px;
-  right: 12px;
-  top: 42px;
+  left: 90px;
+  right: 10px;
+  top: 40px;
   z-index: 3;
   display: flex;
   min-width: 0;
-  height: calc(100% - 55px);
+  height: calc(100% - 48px);
   flex-direction: column;
 }
 
 .expo-map-booth-copy h3 {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 900;
   line-height: 1.15;
   color: white;
 }
 
 .expo-map-booth-name {
-  margin-top: 3px;
-  display: -webkit-box;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  font-size: 10px;
-  font-weight: 800;
-  line-height: 1.35;
-  color: rgb(255 255 255 / 0.86);
-}
-
-.expo-map-booth-desc {
-  margin-top: 8px;
+  margin-top: 2px;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   font-size: 9px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: rgb(255 255 255 / 0.86);
+}
+
+.expo-map-booth-desc {
+  margin-top: 6px;
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  font-size: 8px;
   font-weight: 600;
-  line-height: 1.45;
+  line-height: 1.38;
   color: rgb(255 255 255 / 0.7);
 }
 
@@ -447,12 +453,12 @@ body {
   display: inline-flex;
   width: max-content;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   border: 1px solid rgb(255 255 255 / 0.2);
   border-radius: 0.18rem;
   background: rgb(255 255 255 / 0.1);
-  padding: 5px 9px;
-  font-size: 9px;
+  padding: 4px 8px;
+  font-size: 8px;
   font-weight: 900;
   color: white;
   transition:
@@ -466,36 +472,41 @@ body {
 }
 
 .expo-map-booth.is-bottom .expo-map-booth-logo {
-  left: 20px;
+  left: 18px;
   top: 14px;
-  width: 82px;
-  height: 32px;
+  width: 74px;
+  height: 28px;
   border-radius: 0.16rem;
   background: rgb(255 255 255 / 0.88);
-  padding: 5px;
+  padding: 4px;
   box-shadow: 0 10px 20px rgb(0 0 0 / 0.2);
 }
 
 .expo-map-booth.is-bottom .expo-map-booth-thumb {
-  left: 22px;
+  left: 20px;
   bottom: 18px;
-  width: 82px;
-  height: 60px;
+  width: 74px;
+  height: 52px;
 }
 
 .expo-map-booth.is-bottom .expo-map-booth-copy {
-  left: 120px;
-  top: 44px;
-  height: calc(100% - 52px);
+  left: 108px;
+  top: 42px;
+  height: calc(100% - 48px);
 }
 
 .expo-map-booth.is-bottom .expo-map-booth-copy h3 {
-  font-size: 12px;
+  font-size: 10px;
+}
+
+.expo-map-booth.is-bottom .expo-map-booth-desc {
+  margin-top: 5px;
+  -webkit-line-clamp: 2;
 }
 
 .expo-map-corridor {
-  border-top: 4px solid rgb(15 88 96 / 0.96);
-  border-bottom: 4px solid rgb(15 88 96 / 0.96);
+  border-top: 3px solid rgb(15 88 96 / 0.96);
+  border-bottom: 3px solid rgb(15 88 96 / 0.96);
   background: white;
   box-shadow:
     0 8px 22px rgb(0 0 0 / 0.2),
@@ -507,7 +518,7 @@ body {
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
 }
 
 .expo-map-gate > div {
@@ -529,7 +540,7 @@ body {
   top: 50%;
   z-index: 1;
   transform: translateY(-50%);
-  font-size: 46px;
+  font-size: 38px;
   font-weight: 900;
   line-height: 1;
   color: rgb(96 165 250 / 0.34);
@@ -538,8 +549,8 @@ body {
 .expo-map-robot {
   z-index: 3;
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 38px;
+  height: 38px;
   place-items: center;
   border: 1px solid rgb(14 165 233 / 0.24);
   border-radius: 999px;
@@ -558,7 +569,7 @@ body {
   border: 1px solid rgb(203 213 225 / 0.58);
   border-radius: 0.22rem;
   background: rgb(113 129 147 / 0.92);
-  padding: 9px 14px;
+  padding: 7px 12px;
   text-align: center;
   color: white;
   box-shadow:
@@ -567,7 +578,7 @@ body {
 }
 
 .expo-map-lane p {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
   line-height: 1.2;
   letter-spacing: 0.06em;
@@ -576,8 +587,8 @@ body {
 
 .expo-map-lane span {
   display: block;
-  margin-top: 3px;
-  font-size: 9px;
+  margin-top: 2px;
+  font-size: 8px;
   font-weight: 600;
   color: rgb(236 254 255 / 0.76);
 }

@@ -40,7 +40,7 @@ export function ScheduleTab() {
   };
 
   const handleSaveSchedule = async (data: any) => {
-    if (editingSchedule) {
+    if (editingSchedule?.id) {
       await updateSchedule(editingSchedule.id, data);
     } else {
       await addSchedule(data);
@@ -98,10 +98,12 @@ export function ScheduleTab() {
         <div className="space-y-4">
           {schedules.map((schedule) => (
             <ScheduleCard
-              key={schedule.id}
+              key={schedule.id ?? `${schedule.time}-${schedule.label}`}
               schedule={schedule}
               onEdit={() => handleEditClick(schedule)}
-              onDelete={() => handleDeleteClick(schedule.id)}
+              onDelete={() => {
+                if (schedule.id) handleDeleteClick(schedule.id);
+              }}
             />
           ))}
         </div>
