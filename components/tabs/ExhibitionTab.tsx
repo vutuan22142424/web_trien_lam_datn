@@ -1,23 +1,27 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
 import {
   Activity,
-  AlertTriangle,
   BatteryCharging,
   CheckCircle2,
   Clock3,
-  Compass,
-  Cpu,
-  MapPin,
+  Database,
+  Gauge,
+  Home,
   Navigation,
+  Pause,
+  Play,
+  Power,
   Radio,
-  Route,
+  Satellite,
+  Send,
+  Server,
   Signal,
   Thermometer,
   Timer,
-  UsersRound,
-  Wifi,
+  Zap,
   XCircle,
   type LucideIcon,
 } from 'lucide-react';
@@ -30,9 +34,28 @@ type MqttCommand = {
   topic: string;
   command: string;
   payload: string;
+  feedbackTopic: string;
   status: string;
   qos: number;
   latencyMs: number;
+};
+
+type TopicGroup = {
+  name: string;
+  topics: string[];
+};
+
+type ActionTone = 'blue' | 'emerald' | 'amber' | 'rose' | 'slate';
+
+type QuickRobotAction = {
+  id: string;
+  label: string;
+  topic: string;
+  command: string;
+  payload: string;
+  feedbackTopic: string;
+  qos: number;
+  tone: string;
 };
 
 type RobotPosition = {
@@ -42,6 +65,41 @@ type RobotPosition = {
   heading: number;
   accuracy: string;
   lastPing: string;
+};
+
+type RobotTelemetry = {
+  battery: {
+    soc: number;
+    voltage: number;
+    current: number;
+    power: number;
+    ocv: number;
+    cell_v: number;
+    charging_state: string;
+    charging: boolean;
+    latch: boolean;
+    soc_init: boolean;
+    uptime_s: number;
+  };
+  state: {
+    time: number;
+    state: string;
+    activeCommandId: string;
+    queueDepth: number;
+  };
+  pose: {
+    time: number;
+    x: number;
+    y: number;
+    yaw: number;
+  };
+  service: {
+    activeRequest: string;
+    todaySucceeded: number;
+    todayFailed: number;
+    todayRejected: number;
+    medianLatencyMs: number;
+  };
 };
 
 type RobotData = {
@@ -59,24 +117,19 @@ type RobotData = {
   currentLocation: string;
   nextScheduledMaintenance: string;
   position: RobotPosition;
+  telemetry: RobotTelemetry;
   mqtt: {
     broker: string;
     clientId: string;
     connection: string;
     lastSync: string;
+    topicGroups: TopicGroup[];
+    quickActions: QuickRobotAction[];
     commands: MqttCommand[];
   };
 };
 
-type AnalyticsData = {
-  uniqueVisitors: number;
-  robustStats?: {
-    guidedTours?: number;
-    questionsAnswered?: number;
-    visitorsAssisted?: number;
-    systemUptime?: number;
-  };
-};
+type AnalyticsData = Record<string, unknown>;
 
 interface ExhibitionTabProps {
   analytics: AnalyticsData;
@@ -84,25 +137,70 @@ interface ExhibitionTabProps {
 }
 
 const statusMeta: Record<string, { label: string; className: string; icon: LucideIcon }> = {
-  acknowledged: {
-    label: 'ACK',
+  ACCEPTED: {
+    label: 'ACCEPTED',
     className: 'border-emerald-200 bg-emerald-50 text-emerald-700',
     icon: CheckCircle2,
   },
-  delivered: {
-    label: 'DELIVERED',
+  QUEUED_WHILE_PAUSED: {
+    label: 'QUEUED',
+    className: 'border-amber-200 bg-amber-50 text-amber-700',
+    icon: Clock3,
+  },
+  EXECUTING: {
+    label: 'EXECUTING',
     className: 'border-sky-200 bg-sky-50 text-sky-700',
+    icon: Activity,
+  },
+  PREEMPTED: {
+    label: 'PREEMPTED',
+    className: 'border-amber-200 bg-amber-50 text-amber-700',
     icon: Signal,
   },
-  rejected: {
+  PAUSED: {
+    label: 'PAUSED',
+    className: 'border-amber-200 bg-amber-50 text-amber-700',
+    icon: Clock3,
+  },
+  CANCELING: {
+    label: 'CANCELING',
+    className: 'border-amber-200 bg-amber-50 text-amber-700',
+    icon: Clock3,
+  },
+  CANCELED: {
+    label: 'CANCELED',
+    className: 'border-slate-200 bg-slate-100 text-slate-700',
+    icon: XCircle,
+  },
+  SUCCEEDED: {
+    label: 'SUCCEEDED',
+    className: 'border-emerald-200 bg-emerald-50 text-emerald-700',
+    icon: CheckCircle2,
+  },
+  FAILED: {
+    label: 'FAILED',
+    className: 'border-rose-200 bg-rose-50 text-rose-700',
+    icon: XCircle,
+  },
+  REJECTED: {
     label: 'REJECTED',
     className: 'border-rose-200 bg-rose-50 text-rose-700',
     icon: XCircle,
   },
-  queued: {
-    label: 'QUEUED',
+  DOCKED: {
+    label: 'DOCKED',
+    className: 'border-blue-200 bg-blue-50 text-blue-700',
+    icon: CheckCircle2,
+  },
+  DOCK_FAILED: {
+    label: 'DOCK FAILED',
+    className: 'border-rose-200 bg-rose-50 text-rose-700',
+    icon: XCircle,
+  },
+  PREEMPTED_BY_DOCK: {
+    label: 'DOCK PREEMPT',
     className: 'border-amber-200 bg-amber-50 text-amber-700',
-    icon: Clock3,
+    icon: Signal,
   },
 };
 
@@ -112,6 +210,47 @@ const metricTone = {
   amber: 'bg-amber-50 text-amber-700 ring-amber-100',
   slate: 'bg-slate-100 text-slate-700 ring-slate-200',
 };
+
+const actionTone: Record<ActionTone, { idle: string; active: string; icon: string }> = {
+  blue: {
+    idle: 'bg-blue-50 text-blue-700 ring-blue-100',
+    active: 'bg-blue-500 text-white ring-blue-400',
+    icon: 'bg-blue-50 text-blue-700 ring-blue-100',
+  },
+  emerald: {
+    idle: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+    active: 'bg-emerald-500 text-white ring-emerald-400',
+    icon: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
+  },
+  amber: {
+    idle: 'bg-amber-50 text-amber-700 ring-amber-100',
+    active: 'bg-amber-500 text-white ring-amber-400',
+    icon: 'bg-amber-50 text-amber-700 ring-amber-100',
+  },
+  rose: {
+    idle: 'bg-rose-50 text-rose-700 ring-rose-100',
+    active: 'bg-rose-500 text-white ring-rose-400',
+    icon: 'bg-rose-50 text-rose-700 ring-rose-100',
+  },
+  slate: {
+    idle: 'bg-slate-100 text-slate-700 ring-slate-200',
+    active: 'bg-slate-950 text-white ring-slate-800',
+    icon: 'bg-slate-100 text-slate-700 ring-slate-200',
+  },
+};
+
+const actionIconMap: Record<string, LucideIcon> = {
+  gotodock: Home,
+  pause: Pause,
+  resume: Play,
+  wakeup: Power,
+  cancel_request: XCircle,
+  service_request: Send,
+};
+
+function getActionTone(tone: string): ActionTone {
+  return tone in actionTone ? (tone as ActionTone) : 'slate';
+}
 
 const mapZones = [
   { name: 'Coca-Cola', className: 'left-[12%] top-[12%] h-[20%] w-[16%]', tone: 'bg-red-100 text-red-700 border-red-200' },
@@ -164,6 +303,7 @@ function MetricTile({
 
 function RobotMap({ robot }: { robot: RobotData }) {
   const position = robot.position;
+  const pose = robot.telemetry.pose;
 
   return (
     <ShellPanel className="lg:col-span-2">
@@ -199,13 +339,6 @@ function RobotMap({ robot }: { robot: RobotData }) {
             <div className="absolute right-[3%] top-[43%] grid h-[14%] w-[8%] place-items-center rounded-[0.9rem] border border-cyan-200 bg-cyan-50 text-center text-[10px] font-black uppercase tracking-[0.1em] text-cyan-700">
               Gate B
             </div>
-            <div className="absolute left-[6%] bottom-[10%] grid h-[18%] w-[8%] place-items-center rounded-[0.9rem] border border-slate-200 bg-white text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
-              Dock A1
-            </div>
-            <div className="absolute right-[8%] bottom-[10%] grid h-[18%] w-[9%] place-items-center rounded-[0.9rem] border border-slate-200 bg-white text-center text-[10px] font-black uppercase tracking-[0.1em] text-slate-500">
-              Service
-            </div>
-
             {mapZones.map((zone) => (
               <div key={zone.name} className={cn('absolute grid place-items-center rounded-[0.95rem] border px-2 text-center text-[11px] font-black shadow-[0_10px_22px_rgba(15,23,42,0.07)]', zone.className, zone.tone)}>
                 {zone.name}
@@ -234,19 +367,128 @@ function RobotMap({ robot }: { robot: RobotData }) {
           </div>
         </div>
 
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <div className="rounded-[1rem] bg-slate-50 px-4 py-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Độ chính xác</p>
-            <p className="mt-1 font-mono text-lg font-black text-slate-950">{position.accuracy}</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Pose x/y</p>
+            <p className="mt-1 font-mono text-lg font-black text-slate-950">{pose.x.toFixed(2)}, {pose.y.toFixed(2)}</p>
+            <p className="mt-1 text-[11px] font-semibold text-slate-500">Accuracy {position.accuracy}</p>
+          </div>
+          <div className="rounded-[1rem] bg-slate-50 px-4 py-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Yaw</p>
+            <p className="mt-1 font-mono text-lg font-black text-slate-950">{pose.yaw.toFixed(2)} rad</p>
+            <p className="mt-1 text-[11px] font-semibold text-slate-500">robot/state/pose</p>
           </div>
           <div className="rounded-[1rem] bg-slate-50 px-4 py-3">
             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Heading</p>
             <p className="mt-1 font-mono text-lg font-black text-slate-950">{position.heading}°</p>
+            <p className="mt-1 text-[11px] font-semibold text-slate-500">Map marker</p>
           </div>
           <div className="rounded-[1rem] bg-slate-50 px-4 py-3">
             <p className="text-[10px] font-black uppercase tracking-[0.15em] text-slate-400">Ping cuối</p>
             <p className="mt-1 font-mono text-xs font-black text-slate-950">{position.lastPing}</p>
+            <p className="mt-1 text-[11px] font-semibold text-slate-500">Live sync</p>
           </div>
+        </div>
+      </div>
+    </ShellPanel>
+  );
+}
+
+function QuickRobotActions({ robot }: { robot: RobotData }) {
+  const actions = robot.mqtt.quickActions;
+  const firstAction = actions[0];
+  const [selectedActionId, setSelectedActionId] = useState(firstAction?.id ?? '');
+  const [preparedAt, setPreparedAt] = useState(robot.mqtt.lastSync);
+  const selectedAction = actions.find((action) => action.id === selectedActionId) ?? firstAction;
+
+  if (!selectedAction) {
+    return null;
+  }
+
+  const SelectedIcon = actionIconMap[selectedAction.command] ?? Radio;
+
+  function handleAction(action: QuickRobotAction) {
+    setSelectedActionId(action.id);
+    setPreparedAt(new Date().toLocaleTimeString('vi-VN', { hour12: false }));
+  }
+
+  return (
+    <ShellPanel>
+      <div className="p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">Quick MQTT actions</p>
+            <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-slate-950">Lệnh nhanh cho robot</h3>
+          </div>
+          <div className="rounded-[0.95rem] bg-slate-950 px-3 py-2 text-right text-white shadow-[0_14px_30px_rgba(15,23,42,0.16)]">
+            <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">Prepared</p>
+            <p className="mt-1 font-mono text-xs font-black">{preparedAt}</p>
+          </div>
+        </div>
+
+        <div className="mt-5 grid gap-2 sm:grid-cols-2">
+          {actions.map((action) => {
+            const Icon = actionIconMap[action.command] ?? Send;
+            const tone = getActionTone(action.tone);
+            const isSelected = action.id === selectedAction.id;
+
+            return (
+              <button
+                key={action.id}
+                type="button"
+                aria-pressed={isSelected}
+                onClick={() => handleAction(action)}
+                className={cn(
+                  'group min-h-[74px] rounded-[1rem] p-1 text-left ring-1 transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 active:scale-[0.99]',
+                  isSelected ? 'bg-slate-950 ring-slate-800 shadow-[0_18px_38px_rgba(15,23,42,0.18)]' : 'bg-slate-50 ring-slate-200 hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_14px_34px_rgba(15,23,42,0.07)]',
+                )}
+              >
+                <span className={cn('flex h-full items-start gap-3 rounded-[0.85rem] px-3 py-3', isSelected ? 'bg-white/7 text-white' : 'text-slate-800')}>
+                  <span className={cn('grid h-9 w-9 shrink-0 place-items-center rounded-[0.8rem] ring-1', isSelected ? actionTone[tone].active : actionTone[tone].icon)}>
+                    <Icon className="h-4 w-4" strokeWidth={1.9} />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-black leading-5">{action.label}</span>
+                    <span className={cn('mt-1 block truncate font-mono text-[10px] font-bold', isSelected ? 'text-white/48' : 'text-slate-400')}>
+                      {action.topic}
+                    </span>
+                  </span>
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="mt-5 overflow-hidden rounded-[1rem] bg-slate-950 p-4 text-white">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/35">Selected command</p>
+              <div className="mt-2 flex min-w-0 items-center gap-2">
+                <span className={cn('grid h-8 w-8 shrink-0 place-items-center rounded-[0.75rem] ring-1', actionTone[getActionTone(selectedAction.tone)].active)}>
+                  <SelectedIcon className="h-4 w-4" strokeWidth={1.9} />
+                </span>
+                <p className="truncate font-mono text-sm font-black">{selectedAction.command}</p>
+              </div>
+            </div>
+            <span className="shrink-0 rounded-full border border-white/10 bg-white/8 px-2.5 py-1 font-mono text-[10px] font-black text-white/70">
+              QoS {selectedAction.qos}
+            </span>
+          </div>
+
+          <div className="mt-4 grid gap-3 text-xs">
+            <div>
+              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Topic</p>
+              <p className="mt-1 truncate font-mono font-bold text-white">{selectedAction.topic}</p>
+            </div>
+            <div>
+              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Feedback</p>
+              <p className="mt-1 truncate font-mono font-bold text-white">{selectedAction.feedbackTopic}</p>
+            </div>
+          </div>
+
+          <pre className="mt-4 max-h-32 overflow-auto rounded-[0.8rem] bg-white/8 px-3 py-2 font-mono text-[11px] font-semibold leading-5 text-white/72 ring-1 ring-white/10">
+            {selectedAction.payload}
+          </pre>
         </div>
       </div>
     </ShellPanel>
@@ -255,6 +497,7 @@ function RobotMap({ robot }: { robot: RobotData }) {
 
 function MqttCommandHistory({ robot }: { robot: RobotData }) {
   const commands = robot.mqtt.commands;
+  const state = robot.telemetry.state;
 
   return (
     <ShellPanel>
@@ -271,7 +514,11 @@ function MqttCommandHistory({ robot }: { robot: RobotData }) {
         </div>
 
         <div className="mt-5 rounded-[1rem] bg-slate-950 p-4 text-white">
-          <div className="grid gap-3 text-xs sm:grid-cols-2">
+          <div className="grid gap-3 text-xs sm:grid-cols-3">
+            <div>
+              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Robot state</p>
+              <p className="mt-1 font-mono font-bold text-white">{state.state}</p>
+            </div>
             <div>
               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Broker</p>
               <p className="mt-1 font-mono font-bold text-white">{robot.mqtt.broker}</p>
@@ -287,7 +534,7 @@ function MqttCommandHistory({ robot }: { robot: RobotData }) {
 
         <div className="mt-5 space-y-3">
           {commands.map((command) => {
-            const meta = statusMeta[command.status] ?? statusMeta.queued;
+            const meta = statusMeta[command.status] ?? statusMeta.ACCEPTED;
             const StatusIcon = meta.icon;
 
             return (
@@ -302,6 +549,7 @@ function MqttCommandHistory({ robot }: { robot: RobotData }) {
                       </span>
                     </div>
                     <p className="mt-2 truncate font-mono text-[11px] font-semibold text-slate-500">{command.topic}</p>
+                    <p className="mt-1 truncate font-mono text-[10px] font-semibold text-slate-400">feedback: {command.feedbackTopic}</p>
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="font-mono text-xs font-black text-slate-950">{command.latencyMs}ms</p>
@@ -325,6 +573,9 @@ function MqttCommandHistory({ robot }: { robot: RobotData }) {
 }
 
 function RobotReadiness({ robot }: { robot: RobotData }) {
+  const battery = robot.telemetry.battery;
+  const uptimeHours = (battery.uptime_s / 3600).toFixed(1);
+
   return (
     <ShellPanel>
       <div className="p-5 sm:p-6">
@@ -346,14 +597,25 @@ function RobotReadiness({ robot }: { robot: RobotData }) {
         <div className="mt-6 grid gap-3">
           <div>
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Pin</span>
-              <span className="font-mono text-sm font-black text-slate-950">{robot.batteryLevel}%</span>
+              <span className="text-xs font-black uppercase tracking-[0.14em] text-slate-400">Battery SoC</span>
+              <span className="font-mono text-sm font-black text-slate-950">{battery.soc}%</span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-slate-100">
-              <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-blue-500" style={{ width: `${robot.batteryLevel}%` }} />
+              <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-blue-500" style={{ width: `${battery.soc}%` }} />
             </div>
+            <p className="mt-2 text-xs font-semibold text-slate-500">{battery.voltage}V · {battery.charging_state} · robot/battery/status</p>
           </div>
           <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-[1rem] bg-slate-50 p-3">
+              <Zap className="h-4 w-4 text-slate-400" strokeWidth={1.8} />
+              <p className="mt-2 font-mono text-lg font-black text-slate-950">{battery.current}A</p>
+              <p className="text-xs font-semibold text-slate-500">Current</p>
+            </div>
+            <div className="rounded-[1rem] bg-slate-50 p-3">
+              <Gauge className="h-4 w-4 text-slate-400" strokeWidth={1.8} />
+              <p className="mt-2 font-mono text-lg font-black text-slate-950">{battery.power}W</p>
+              <p className="text-xs font-semibold text-slate-500">Power draw</p>
+            </div>
             <div className="rounded-[1rem] bg-slate-50 p-3">
               <Thermometer className="h-4 w-4 text-slate-400" strokeWidth={1.8} />
               <p className="mt-2 font-mono text-lg font-black text-slate-950">{robot.temperatureSensor}°C</p>
@@ -361,7 +623,7 @@ function RobotReadiness({ robot }: { robot: RobotData }) {
             </div>
             <div className="rounded-[1rem] bg-slate-50 p-3">
               <Timer className="h-4 w-4 text-slate-400" strokeWidth={1.8} />
-              <p className="mt-2 font-mono text-lg font-black text-slate-950">{robot.uptime}h</p>
+              <p className="mt-2 font-mono text-lg font-black text-slate-950">{uptimeHours}h</p>
               <p className="text-xs font-semibold text-slate-500">Uptime</p>
             </div>
           </div>
@@ -375,9 +637,56 @@ function RobotReadiness({ robot }: { robot: RobotData }) {
   );
 }
 
-export function ExhibitionTab({ analytics, robot }: ExhibitionTabProps) {
-  const acknowledgedCommands = robot.mqtt.commands.filter((command) => command.status === 'acknowledged' || command.status === 'delivered').length;
-  const commandRate = Math.round((acknowledgedCommands / robot.mqtt.commands.length) * 100);
+function MqttTopicContract({ robot }: { robot: RobotData }) {
+  return (
+    <ShellPanel>
+      <div className="p-5 sm:p-6">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">MQTT topic contract</p>
+            <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-slate-950">Luồng dữ liệu robot</h3>
+          </div>
+          <span className="grid h-10 w-10 shrink-0 place-items-center rounded-[0.95rem] bg-slate-950 text-white shadow-[0_14px_30px_rgba(15,23,42,0.16)]">
+            <Database className="h-4 w-4" strokeWidth={1.9} />
+          </span>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          {robot.mqtt.topicGroups.map((group, index) => {
+            const Icon = index === 0 ? BatteryCharging : Server;
+
+            return (
+              <div key={group.name} className="rounded-[1rem] bg-slate-50 p-4 ring-1 ring-slate-200">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-[0.8rem] bg-white text-slate-700 ring-1 ring-slate-200">
+                      <Icon className="h-4 w-4" strokeWidth={1.8} />
+                    </span>
+                    <p className="truncate text-sm font-black text-slate-800">{group.name}</p>
+                  </div>
+                  <span className="font-mono text-xs font-black text-slate-500">{group.topics.length} topics</span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {group.topics.map((topic) => (
+                    <span key={topic} className="rounded-full border border-slate-200 bg-white px-2.5 py-1 font-mono text-[10px] font-bold text-slate-600">
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </ShellPanel>
+  );
+}
+
+export function ExhibitionTab({ robot }: ExhibitionTabProps) {
+  const { battery, pose, service, state } = robot.telemetry;
+  const serviceTotal = service.todaySucceeded + service.todayFailed + service.todayRejected;
+  const serviceReliability = Math.round((service.todaySucceeded / Math.max(serviceTotal, 1)) * 100);
 
   return (
     <div className="space-y-6">
@@ -399,23 +708,25 @@ export function ExhibitionTab({ analytics, robot }: ExhibitionTabProps) {
             </div>
             <div className="grid gap-3 rounded-[1.4rem] bg-white/8 p-4 ring-1 ring-white/10">
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/42">System health</span>
-                <span className="rounded-full bg-emerald-400/12 px-3 py-1 text-xs font-black text-emerald-200">{analytics.robustStats?.systemUptime ?? 99.8}%</span>
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-white/42">Service feedback</span>
+                <span className="rounded-full bg-emerald-400/12 px-3 py-1 text-xs font-black text-emerald-200">{serviceReliability}%</span>
               </div>
               <div className="h-2 overflow-hidden rounded-full bg-white/10">
-                <div className="h-full rounded-full bg-emerald-300" style={{ width: `${analytics.robustStats?.systemUptime ?? 99.8}%` }} />
+                <div className="h-full rounded-full bg-emerald-300" style={{ width: `${serviceReliability}%` }} />
               </div>
-              <p className="text-xs font-semibold leading-5 text-white/50">Bảo trì tiếp theo: {robot.nextScheduledMaintenance}</p>
+              <p className="text-xs font-semibold leading-5 text-white/50">
+                {service.todaySucceeded} succeeded · {service.todayFailed + service.todayRejected} cần xem lại · bảo trì {robot.nextScheduledMaintenance}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <MetricTile icon={UsersRound} label="Khách đã hỗ trợ" value={(analytics.robustStats?.visitorsAssisted ?? 0).toLocaleString()} detail="Tổng lượt robot hỗ trợ tại sự kiện" tone="blue" />
-        <MetricTile icon={Route} label="Tour dẫn đường" value={(analytics.robustStats?.guidedTours ?? 0).toLocaleString()} detail="Chuyến tham quan do robot dẫn" tone="emerald" />
-        <MetricTile icon={Wifi} label="MQTT ACK rate" value={`${commandRate}%`} detail={`${acknowledgedCommands}/${robot.mqtt.commands.length} lệnh đã xác nhận`} tone="amber" />
-        <MetricTile icon={BatteryCharging} label="Pin robot" value={`${robot.batteryLevel}%`} detail="Sẵn sàng cho phiên vận hành" tone="slate" />
+        <MetricTile icon={Server} label="Robot state" value={state.state} detail={`Active ${state.activeCommandId} · queue ${state.queueDepth}`} tone="blue" />
+        <MetricTile icon={BatteryCharging} label="Battery telemetry" value={`${battery.soc}%`} detail={`${battery.voltage}V · ${battery.current}A · ${battery.charging_state}`} tone="emerald" />
+        <MetricTile icon={Satellite} label="Pose stream" value={`${pose.x.toFixed(2)}, ${pose.y.toFixed(2)}`} detail={`yaw ${pose.yaw.toFixed(2)} rad · robot/state/pose`} tone="amber" />
+        <MetricTile icon={Gauge} label="Command latency" value={`${service.medianLatencyMs}ms`} detail={`QoS 1 · ${robot.mqtt.commands.length} recent commands`} tone="slate" />
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.45fr)_minmax(390px,0.9fr)]">
@@ -423,38 +734,14 @@ export function ExhibitionTab({ analytics, robot }: ExhibitionTabProps) {
           <RobotMap robot={robot} />
           <div className="grid gap-6 lg:grid-cols-2">
             <RobotReadiness robot={robot} />
-            <ShellPanel>
-              <div className="p-5 sm:p-6">
-                <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">Robot capability</p>
-                <h3 className="mt-2 text-2xl font-black tracking-[-0.03em] text-slate-950">Tình trạng tác vụ</h3>
-                <div className="mt-5 space-y-3">
-                  {[
-                    { label: 'SLAM navigation', value: 'Stable', icon: Compass, color: 'text-emerald-600 bg-emerald-50' },
-                    { label: 'Vision stack', value: `${robot.specifications.cameras} cameras`, icon: Activity, color: 'text-blue-600 bg-blue-50' },
-                    { label: 'Voice interface', value: `${robot.specifications.microphones} microphones`, icon: Cpu, color: 'text-amber-600 bg-amber-50' },
-                    { label: 'Safety override', value: 'Armed', icon: AlertTriangle, color: 'text-rose-600 bg-rose-50' },
-                  ].map((item) => {
-                    const Icon = item.icon;
-
-                    return (
-                      <div key={item.label} className="flex items-center justify-between gap-4 rounded-[1rem] bg-slate-50 px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <span className={cn('grid h-9 w-9 place-items-center rounded-[0.8rem]', item.color)}>
-                            <Icon className="h-4 w-4" strokeWidth={1.8} />
-                          </span>
-                          <span className="text-sm font-bold text-slate-700">{item.label}</span>
-                        </div>
-                        <span className="font-mono text-xs font-black text-slate-950">{item.value}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </ShellPanel>
+            <MqttTopicContract robot={robot} />
           </div>
         </div>
 
-        <MqttCommandHistory robot={robot} />
+        <div className="grid content-start gap-6">
+          <QuickRobotActions robot={robot} />
+          <MqttCommandHistory robot={robot} />
+        </div>
       </div>
     </div>
   );

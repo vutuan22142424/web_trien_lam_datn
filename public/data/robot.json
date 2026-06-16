@@ -3,9 +3,9 @@
   "status": "active",
   "model": "Advanced Humanoid Guide Robot",
   "version": "2.5.1",
-  "batteryLevel": 92,
+  "batteryLevel": 75.3,
   "temperatureSensor": 36.5,
-  "uptime": 2342,
+  "uptime": 12345,
   "specifications": {
     "height": "1.6m",
     "weight": "45kg",
@@ -33,6 +33,40 @@
     "accuracy": "0.42m",
     "lastPing": "2026-06-16 14:37:18"
   },
+  "telemetry": {
+    "battery": {
+      "soc": 75.3,
+      "voltage": 22.2,
+      "current": 1.12,
+      "power": 24.86,
+      "ocv": 22.41,
+      "cell_v": 4.12,
+      "charging_state": "discharging",
+      "charging": false,
+      "latch": false,
+      "soc_init": true,
+      "uptime_s": 12345
+    },
+    "state": {
+      "time": 1718548758,
+      "state": "EXECUTING",
+      "activeCommandId": "req-8f42a9",
+      "queueDepth": 2
+    },
+    "pose": {
+      "time": 1718548758,
+      "x": 11.11,
+      "y": 22.22,
+      "yaw": 3.14
+    },
+    "service": {
+      "activeRequest": "req-8f42a9",
+      "todaySucceeded": 47,
+      "todayFailed": 1,
+      "todayRejected": 2,
+      "medianLatencyMs": 74
+    }
+  },
   "nextScheduledMaintenance": "2026-06-24",
   "operatingHours": {
     "start": "08:00",
@@ -43,78 +77,155 @@
     "clientId": "admin-console-nova-x1",
     "connection": "connected",
     "lastSync": "2026-06-16 14:39:10",
-    "commands": [
+    "topicGroups": [
       {
-        "id": "cmd-1842",
-        "timestamp": "2026-06-16 14:38:22",
-        "operator": "ops-admin",
-        "topic": "fce/robot/nova-x1/navigation/route",
-        "command": "ROUTE_TO_ZONE",
-        "payload": "{\"target\":\"Nutifood\",\"mode\":\"visitor_escort\"}",
-        "status": "acknowledged",
-        "qos": 1,
-        "latencyMs": 86
+        "name": "Power-Switch and Battery Monitor",
+        "topics": ["robot/battery/status", "robot/battery/soc", "robot/battery/voltage", "robot/battery/current", "robot/battery/power", "robot/powerswitch/event", "robot/powerswitch/cmd", "robot/pi/shutdown_ack"]
       },
       {
-        "id": "cmd-1841",
-        "timestamp": "2026-06-16 14:34:05",
-        "operator": "ops-admin",
-        "topic": "fce/robot/nova-x1/speech/say",
-        "command": "SAY",
-        "payload": "{\"lang\":\"vi\",\"text\":\"Xin mời di chuyển theo lối giữa.\"}",
-        "status": "delivered",
+        "name": "ROS2 Bridging",
+        "topics": ["robot/cmd/service_request", "robot/cmd/cancel_request", "robot/cmd/gotodock", "robot/cmd/pause", "robot/cmd/resume", "robot/cmd/wakeup", "robot/state/service_feedback", "robot/state/state", "robot/state/pose"]
+      }
+    ],
+    "quickActions": [
+      {
+        "id": "quick-dock",
+        "label": "Quay về sạc",
+        "topic": "robot/cmd/gotodock",
+        "command": "gotodock",
+        "payload": "{\"customer_id\":\"admin-console\",\"reason\":\"manual_dock\"}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "blue"
+      },
+      {
+        "id": "quick-pause",
+        "label": "Dừng lại",
+        "topic": "robot/cmd/pause",
+        "command": "pause",
+        "payload": "null",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "amber"
+      },
+      {
+        "id": "quick-resume",
+        "label": "Tiếp tục",
+        "topic": "robot/cmd/resume",
+        "command": "resume",
+        "payload": "null",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "emerald"
+      },
+      {
+        "id": "quick-wakeup",
+        "label": "Đánh thức",
+        "topic": "robot/cmd/wakeup",
+        "command": "wakeup",
+        "payload": "null",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "slate"
+      },
+      {
+        "id": "quick-cancel",
+        "label": "Hủy yêu cầu",
+        "topic": "robot/cmd/cancel_request",
+        "command": "cancel_request",
+        "payload": "{\"command_id\":\"*\"}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "rose"
+      },
+      {
+        "id": "quick-service",
+        "label": "Gọi đến lane",
+        "topic": "robot/cmd/service_request",
+        "command": "service_request",
+        "payload": "{\"command_id\":\"manual-lane\",\"data\":{\"x\":11.11,\"y\":22.22,\"yaw\":3.14,\"customer_id\":\"admin-console\",\"timeout_sec\":120,\"return_to_patrol\":false,\"priority\":4,\"speed_limit_ms\":0.8}}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "qos": 1,
+        "tone": "emerald"
+      }
+    ],
+    "commands": [
+      {
+        "id": "req-8f42a9",
+        "timestamp": "2026-06-16 14:38:22",
+        "operator": "tablet",
+        "topic": "robot/cmd/service_request",
+        "command": "service_request",
+        "payload": "{\"command_id\":\"req-8f42a9\",\"data\":{\"x\":11.11,\"y\":22.22,\"yaw\":3.14,\"customer_id\":\"tablet\",\"timeout_sec\":120,\"return_to_patrol\":false,\"priority\":5,\"speed_limit_ms\":0.8}}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "status": "EXECUTING",
         "qos": 1,
         "latencyMs": 74
       },
       {
-        "id": "cmd-1840",
-        "timestamp": "2026-06-16 14:30:49",
-        "operator": "system",
-        "topic": "fce/robot/nova-x1/diagnostics/ping",
-        "command": "DIAGNOSTIC_PING",
-        "payload": "{\"includeSensors\":true,\"includeMap\":true}",
-        "status": "acknowledged",
-        "qos": 0,
-        "latencyMs": 43
-      },
-      {
-        "id": "cmd-1839",
-        "timestamp": "2026-06-16 14:22:17",
+        "id": "req-8f4290",
+        "timestamp": "2026-06-16 14:35:04",
         "operator": "ops-admin",
-        "topic": "fce/robot/nova-x1/motion/speed",
-        "command": "SET_SPEED_LIMIT",
-        "payload": "{\"maxSpeed\":\"0.8m/s\",\"zone\":\"main_corridor\"}",
-        "status": "acknowledged",
+        "topic": "robot/cmd/pause",
+        "command": "pause",
+        "payload": "null",
+        "feedbackTopic": "robot/state/service_feedback",
+        "status": "PAUSED",
         "qos": 1,
-        "latencyMs": 91
+        "latencyMs": 68
       },
       {
-        "id": "cmd-1838",
-        "timestamp": "2026-06-16 14:11:03",
+        "id": "req-8f4281",
+        "timestamp": "2026-06-16 14:31:19",
         "operator": "ops-admin",
-        "topic": "fce/robot/nova-x1/navigation/dock",
-        "command": "RETURN_TO_DOCK",
-        "payload": "{\"dock\":\"A1\",\"reason\":\"battery_check\"}",
-        "status": "rejected",
+        "topic": "robot/cmd/resume",
+        "command": "resume",
+        "payload": "null",
+        "feedbackTopic": "robot/state/service_feedback",
+        "status": "ACCEPTED",
+        "qos": 1,
+        "latencyMs": 71
+      },
+      {
+        "id": "req-8f4277",
+        "timestamp": "2026-06-16 14:22:17",
+        "operator": "system",
+        "topic": "robot/cmd/gotodock",
+        "command": "gotodock",
+        "payload": "{\"customer_id\":\"tablet\"}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "status": "REJECTED",
         "qos": 1,
         "latencyMs": 118
+      },
+      {
+        "id": "req-8f4261",
+        "timestamp": "2026-06-16 14:11:03",
+        "operator": "ops-admin",
+        "topic": "robot/cmd/cancel_request",
+        "command": "cancel_request",
+        "payload": "{\"command_id\":\"*\"}",
+        "feedbackTopic": "robot/state/service_feedback",
+        "status": "CANCELED",
+        "qos": 1,
+        "latencyMs": 82
       }
     ]
   },
   "logs": [
     {
       "timestamp": "2026-06-16 14:38:22",
-      "event": "Nhận lệnh ROUTE_TO_ZONE qua MQTT",
+      "event": "Nhận service_request qua robot/cmd/service_request",
       "location": "Smart Guided Experience Lane"
     },
     {
       "timestamp": "2026-06-16 14:34:05",
-      "event": "Phát thông báo hướng dẫn khách tham quan",
+      "event": "Cập nhật pose từ robot/state/pose",
       "location": "Hành lang trung tâm"
     },
     {
       "timestamp": "2026-06-16 14:30:49",
-      "event": "Chẩn đoán cảm biến và bản đồ hoàn tất",
+      "event": "Battery status đồng bộ từ robot/battery/status",
       "location": "Trạm điều phối"
     }
   ]
