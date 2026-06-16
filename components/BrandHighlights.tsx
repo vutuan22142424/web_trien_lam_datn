@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
+import { SELECT_EXPO_BOOTH_EVENT, type SelectExpoBoothEventDetail } from '@/lib/expoEvents';
 import { ArrowRight, Boxes, CalendarDays, ChevronLeft, ChevronRight, Cpu, Globe2, Trophy } from 'lucide-react';
 
 type HighlightBooth = {
@@ -213,19 +214,33 @@ export function BrandHighlights() {
     setActiveIndex((index + booths.length) % booths.length);
   };
 
+  useEffect(() => {
+    const handleBoothSelect = (event: Event) => {
+      const boothId = (event as CustomEvent<SelectExpoBoothEventDetail>).detail?.boothId;
+      const nextIndex = booths.findIndex((booth) => booth.id === boothId);
+
+      if (nextIndex >= 0) {
+        setActiveIndex(nextIndex);
+      }
+    };
+
+    window.addEventListener(SELECT_EXPO_BOOTH_EVENT, handleBoothSelect);
+
+    return () => {
+      window.removeEventListener(SELECT_EXPO_BOOTH_EVENT, handleBoothSelect);
+    };
+  }, []);
+
   return (
     <section id="cong-nghe" className="expo-section-light relative overflow-hidden py-16 sm:py-20">
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6">
-        <div data-reveal className="mb-8 flex flex-col gap-3 sm:mb-10 lg:flex-row lg:items-end lg:justify-between">
+        <div data-reveal className="mb-8 sm:mb-10">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-600">Featured booths</p>
             <h2 className="mt-2 text-2xl font-black uppercase tracking-[-0.035em] text-slate-950 sm:text-4xl">
               Khám phá đầy đủ các gian hàng
             </h2>
           </div>
-          <p className="max-w-xl text-sm font-medium leading-7 text-slate-600">
-            Tổng hợp thông tin thương hiệu, thị trường, thành tựu và công nghệ nổi bật theo tài liệu UI.
-          </p>
         </div>
 
         <div data-reveal className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">

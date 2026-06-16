@@ -372,14 +372,21 @@ html:not(.motion-ready) [data-reveal] {
   top: 16px;
   z-index: 3;
   display: grid;
-  width: 58px;
-  height: 30px;
+  width: 66px;
+  height: 34px;
+  overflow: hidden;
   place-items: center;
+  border-radius: 0.16rem;
+  background: rgb(255 255 255 / 0.9);
+  padding: 4px;
+  box-shadow: 0 10px 20px rgb(0 0 0 / 0.2);
 }
 
 .expo-map-booth-logo img {
   max-width: 100%;
   max-height: 100%;
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   filter: drop-shadow(0 3px 7px rgb(0 0 0 / 0.34));
 }
@@ -461,9 +468,15 @@ html:not(.motion-ready) [data-reveal] {
   font-size: 8px;
   font-weight: 900;
   color: white;
+  cursor: pointer;
   transition:
     background-color 500ms var(--expo-ease),
     transform 500ms var(--expo-ease);
+}
+
+.expo-map-booth-copy button:focus-visible {
+  outline: 2px solid rgb(255 255 255 / 0.9);
+  outline-offset: 2px;
 }
 
 .expo-map-booth-copy button:hover {

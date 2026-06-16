@@ -1,5 +1,6 @@
 'use client';
 
+import { SELECT_EXPO_BOOTH_EVENT, type SelectExpoBoothEventDetail } from '@/lib/expoEvents';
 import { ArrowRight, Bot, DoorOpen, Toilet } from 'lucide-react';
 import type { CSSProperties } from 'react';
 
@@ -22,7 +23,7 @@ const booths: Booth[] = [
     name: 'Coca-Cola Experience Hub',
     brand: 'Coca-Cola',
     desc: 'Trải nghiệm cá nhân hóa đồ uống bằng AI.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://coca-cola.com&size=128',
+    logo: '/logos/booths/coca-cola.svg',
     accent: '#dc1725',
     deep: '#68141a',
     image: '/images/booths/cocacola.webp',
@@ -46,7 +47,7 @@ const booths: Booth[] = [
     name: 'Heineken Future Brewing',
     brand: 'Heineken',
     desc: 'Công nghệ ủ bia bền vững và thông minh.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://heineken.com&size=128',
+    logo: '/logos/booths/heineken.svg',
     accent: '#0b8c45',
     deep: '#05321e',
     image: '/images/booths/heineken.webp',
@@ -58,7 +59,7 @@ const booths: Booth[] = [
     name: 'Tiger Smart Distribution',
     brand: 'Tiger',
     desc: 'Logistics thông minh, tối ưu chuỗi cung ứng.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://tigerbeer.com&size=128',
+    logo: '/logos/booths/tiger.svg',
     accent: '#d88211',
     deep: '#092b54',
     image: '/images/booths/tiger.webp',
@@ -82,7 +83,7 @@ const booths: Booth[] = [
     name: 'Abbott Healthcare Innovation',
     brand: 'Abbott',
     desc: 'Giải pháp chăm sóc sức khỏe tiên tiến.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://abbott.com&size=128',
+    logo: '/logos/booths/abbott.svg',
     accent: '#159bd3',
     deep: '#075985',
     image: '/images/booths/abbott.webp',
@@ -94,7 +95,7 @@ const booths: Booth[] = [
     name: 'Nutifood Nutrition Tech Lab',
     brand: 'Nutifood',
     desc: 'Dinh dưỡng cá nhân hóa dựa trên dữ liệu sức khỏe.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://nutifood.com.vn&size=128',
+    logo: '/logos/booths/nutifood.svg',
     accent: '#0c9b61',
     deep: '#065f46',
     image: '/images/booths/nutifood.webp',
@@ -106,7 +107,7 @@ const booths: Booth[] = [
     name: 'Vinamilk DairyTech Future Zone',
     brand: 'Vinamilk',
     desc: 'Công nghệ sản xuất sữa thông minh thế hệ mới.',
-    logo: 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=http://vinamilk.com.vn&size=128',
+    logo: '/logos/booths/vinamilk.svg',
     accent: '#1655d9',
     deep: '#11356f',
     image: '/images/booths/vinamilk.webp',
@@ -155,6 +156,13 @@ function BoothCard({ booth }: { booth: Booth }) {
     '--booth-image': `url(${booth.image})`,
   } as CSSProperties;
 
+  const handleExplore = () => {
+    const detail: SelectExpoBoothEventDetail = { boothId: booth.id };
+
+    window.dispatchEvent(new CustomEvent(SELECT_EXPO_BOOTH_EVENT, { detail }));
+    document.getElementById('cong-nghe')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   return (
     <article className={`expo-map-booth absolute ${booth.variant === 'bottom' ? 'is-bottom' : 'is-top'} ${booth.className}`} style={style}>
       <span className="expo-map-booth-number">{booth.id}</span>
@@ -166,7 +174,7 @@ function BoothCard({ booth }: { booth: Booth }) {
         <h3>{booth.brand}</h3>
         <p className="expo-map-booth-name">{booth.name}</p>
         <p className="expo-map-booth-desc">{booth.desc}</p>
-        <button>
+        <button type="button" onClick={handleExplore} aria-label={`Khám phá gian hàng ${booth.brand}`}>
           Khám phá
           <ArrowRight className="h-3 w-3" />
         </button>

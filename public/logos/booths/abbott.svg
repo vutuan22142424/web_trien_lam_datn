@@ -1,0 +1,6 @@
+<svg width="180" height="70" viewBox="0 0 180 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abbott">
+  <rect width="180" height="70" rx="10" fill="#FFFFFF"/>
+  <path d="M20 49C25 25 40 16 60 17C49 24 41 34 38 49H20Z" fill="#005DAA"/>
+  <path d="M42 49C46 31 57 22 75 20C66 28 60 38 58 49H42Z" fill="#005DAA" opacity="0.82"/>
+  <text x="86" y="44" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="800" fill="#005DAA">Abbott</text>
+</svg>

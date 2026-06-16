@@ -1,0 +1,6 @@
+<svg width="180" height="70" viewBox="0 0 180 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Heineken">
+  <rect width="180" height="70" rx="10" fill="#FFFFFF"/>
+  <path d="M35 11L40.8 28.7H59.4L44.3 39.6L50.1 57.3L35 46.3L19.9 57.3L25.7 39.6L10.6 28.7H29.2L35 11Z" fill="#D7141A"/>
+  <text x="72" y="42" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="800" fill="#007A3D">Heineken</text>
+  <path d="M72 48H160" stroke="#007A3D" stroke-width="3" stroke-linecap="round"/>
+</svg>

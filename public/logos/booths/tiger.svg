@@ -1,0 +1,7 @@
+<svg width="180" height="70" viewBox="0 0 180 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tiger">
+  <rect width="180" height="70" rx="10" fill="#FFFFFF"/>
+  <path d="M21 43C34 15 63 14 77 34C64 30 50 34 39 47C34 47 27 46 21 43Z" fill="#F58220"/>
+  <path d="M35 36C45 28 59 27 70 33C58 34 48 40 41 49C38 45 36 41 35 36Z" fill="#0B1F43"/>
+  <text x="91" y="45" font-family="Arial Black, Arial, Helvetica, sans-serif" font-size="31" font-weight="900" fill="#F58220">Tiger</text>
+  <path d="M91 51H151" stroke="#0B1F43" stroke-width="3" stroke-linecap="round"/>
+</svg>

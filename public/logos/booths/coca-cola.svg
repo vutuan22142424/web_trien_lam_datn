@@ -1,0 +1,5 @@
+<svg width="180" height="70" viewBox="0 0 180 70" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Coca-Cola">
+  <rect width="180" height="70" rx="10" fill="#C8102E"/>
+  <text x="90" y="43" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" font-style="italic" font-weight="700" fill="#FFFFFF">Coca-Cola</text>
+  <path d="M24 50C49 38 71 63 96 50C118 39 139 47 156 55" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" opacity="0.92"/>
+</svg>
