@@ -51,7 +51,7 @@ const booths: HighlightBooth[] = [
     id: '03',
     brand: 'Red Bull',
     title: 'Red Bull Energy Lab',
-    image: '/images/booths/redbull.svg',
+    image: '/images/booths/redbull.png',
     accent: '#f5c400',
     overview:
       'Red Bull là thương hiệu nước tăng lực nổi tiếng toàn cầu, được biết đến với hình ảnh năng động, sáng tạo và gắn liền với thể thao mạo hiểm, tốc độ và phong cách sống hiện đại.',
@@ -130,7 +130,7 @@ const booths: HighlightBooth[] = [
     id: '09',
     brand: 'Nestlé',
     title: 'Nestlé Smart Food Innovation',
-    image: '/images/booths/nestle.svg',
+    image: '/images/booths/nestle.png',
     accent: '#e1251b',
     overview:
       'Nestlé là tập đoàn thực phẩm và đồ uống lớn nhất thế giới, hoạt động trong nhiều lĩnh vực từ dinh dưỡng trẻ em, cà phê, thực phẩm chế biến đến chăm sóc sức khỏe và dinh dưỡng chuyên sâu.',

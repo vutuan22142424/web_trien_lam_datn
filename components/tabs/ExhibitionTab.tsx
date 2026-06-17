@@ -253,13 +253,16 @@ function getActionTone(tone: string): ActionTone {
 }
 
 const mapZones = [
-  { name: 'Coca-Cola', className: 'left-[12%] top-[12%] h-[20%] w-[16%]', tone: 'bg-red-100 text-red-700 border-red-200' },
-  { name: 'Pepsi', className: 'left-[31%] top-[12%] h-[20%] w-[16%]', tone: 'bg-blue-100 text-blue-700 border-blue-200' },
-  { name: 'Heineken', className: 'left-[50%] top-[12%] h-[20%] w-[16%]', tone: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-  { name: 'Tiger', className: 'left-[69%] top-[12%] h-[20%] w-[16%]', tone: 'bg-amber-100 text-amber-700 border-amber-200' },
-  { name: 'Abbott', className: 'left-[18%] bottom-[12%] h-[18%] w-[18%]', tone: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
-  { name: 'Nutifood', className: 'left-[42%] bottom-[12%] h-[18%] w-[18%]', tone: 'bg-green-100 text-green-700 border-green-200' },
-  { name: 'Vinamilk', className: 'left-[66%] bottom-[12%] h-[18%] w-[18%]', tone: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
+  { name: 'Coca-Cola', className: 'left-[10%] top-[12%] h-[19%] w-[12%]', tone: 'bg-red-100 text-red-700 border-red-200' },
+  { name: 'Pepsi', className: 'left-[23.5%] top-[12%] h-[19%] w-[12%]', tone: 'bg-blue-100 text-blue-700 border-blue-200' },
+  { name: 'Red Bull', className: 'left-[37%] top-[12%] h-[19%] w-[12%]', tone: 'bg-yellow-100 text-yellow-800 border-yellow-200' },
+  { name: 'Heineken', className: 'left-[50.5%] top-[12%] h-[19%] w-[12%]', tone: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
+  { name: 'Tiger', className: 'left-[64%] top-[12%] h-[19%] w-[12%]', tone: 'bg-amber-100 text-amber-700 border-amber-200' },
+  { name: 'Sabeco', className: 'left-[77.5%] top-[12%] h-[19%] w-[12%]', tone: 'bg-orange-100 text-orange-700 border-orange-200' },
+  { name: 'Abbott', className: 'left-[16%] bottom-[12%] h-[18%] w-[16%]', tone: 'bg-cyan-100 text-cyan-700 border-cyan-200' },
+  { name: 'Nutifood', className: 'left-[36.5%] bottom-[12%] h-[18%] w-[16%]', tone: 'bg-green-100 text-green-700 border-green-200' },
+  { name: 'Nestlé', className: 'left-[57%] bottom-[12%] h-[18%] w-[16%]', tone: 'bg-rose-100 text-rose-700 border-rose-200' },
+  { name: 'Vinamilk', className: 'left-[77.5%] bottom-[12%] h-[18%] w-[16%]', tone: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
 ];
 
 function ShellPanel({ children, className }: { children: React.ReactNode; className?: string }) {
