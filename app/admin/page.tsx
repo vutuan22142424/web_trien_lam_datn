@@ -36,7 +36,7 @@ export default function AdminDashboard() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden bg-[#f3f7fb] text-slate-950">
+    <div className="min-h-[100dvh] overflow-x-clip bg-[#f3f7fb] text-slate-950">
       <div className="pointer-events-none fixed inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.92)_0%,rgba(242,247,252,0.78)_42%,rgba(230,238,247,0.68)_100%)]" />
       <div className="pointer-events-none fixed inset-x-0 top-0 h-56 bg-[linear-gradient(90deg,rgba(37,99,235,0.12),rgba(16,185,129,0.10),rgba(15,23,42,0.04))]" />
 
@@ -48,7 +48,7 @@ export default function AdminDashboard() {
             </div>
             <div className="min-w-0">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">Future Consumer Expo</p>
-              <h1 className="truncate text-xl font-black tracking-[-0.035em] text-slate-950 sm:text-2xl">
+              <h1 className="text-balance text-xl font-black leading-tight tracking-[-0.035em] text-slate-950 sm:text-2xl xl:text-xl 2xl:text-2xl">
                 Bảng điều khiển quản trị
               </h1>
             </div>
@@ -95,10 +95,10 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
             <Link
               href="/"
-              className="group inline-flex h-10 items-center gap-2 rounded-full border border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 active:translate-y-0"
+              className="group inline-flex h-10 min-w-0 items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:border-blue-200 hover:text-blue-700 active:translate-y-0 sm:px-4 sm:text-sm"
             >
               Xem trang công khai
               <ExternalLink className="h-4 w-4 transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5" strokeWidth={1.8} />
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="h-10 rounded-full border-slate-200 bg-white px-4 text-sm font-bold text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:bg-slate-950 hover:text-white active:translate-y-0"
+              className="h-10 min-w-0 rounded-full border-slate-200 bg-white px-3 text-xs font-bold text-slate-700 shadow-[0_12px_30px_rgba(15,23,42,0.06)] transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:bg-slate-950 hover:text-white active:translate-y-0 sm:px-4 sm:text-sm"
             >
               <LogOut className="mr-2 h-4 w-4" strokeWidth={1.8} />
               Đăng xuất

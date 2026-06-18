@@ -1,7 +1,7 @@
 'use client';
 
 import { SELECT_EXPO_BOOTH_EVENT, type SelectExpoBoothEventDetail } from '@/lib/expoEvents';
-import { ArrowRight, Bot, DoorOpen, Toilet } from 'lucide-react';
+import { ArrowRight, Bot, DoorOpen, MoveHorizontal, Toilet } from 'lucide-react';
 import type { CSSProperties } from 'react';
 
 type Booth = {
@@ -207,6 +207,47 @@ function BoothCard({ booth }: { booth: Booth }) {
   );
 }
 
+function MobileBoothCard({ booth }: { booth: Booth }) {
+  const handleExplore = () => {
+    const detail: SelectExpoBoothEventDetail = { boothId: booth.id };
+
+    window.dispatchEvent(new CustomEvent(SELECT_EXPO_BOOTH_EVENT, { detail }));
+    document.getElementById('cong-nghe')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  return (
+    <article
+      className="relative min-h-[270px] w-[82vw] max-w-[320px] shrink-0 snap-center overflow-hidden rounded-[1.25rem] border border-white/20 bg-slate-950 shadow-[0_20px_55px_rgba(15,23,42,0.18)]"
+      style={{
+        backgroundImage: `linear-gradient(180deg, rgba(15,23,42,0.08), rgba(15,23,42,0.92)), url(${booth.image})`,
+        backgroundPosition: 'center',
+        backgroundSize: 'cover',
+      }}
+    >
+      <div className="absolute inset-x-0 top-0 flex items-start justify-between p-4">
+        <div className="grid h-11 min-w-24 place-items-center rounded-lg bg-white/94 px-3 shadow-[0_10px_25px_rgba(15,23,42,0.18)]">
+          <img src={booth.logo} alt={`${booth.brand} logo`} className="max-h-7 max-w-20 object-contain" />
+        </div>
+        <span className="font-mono text-sm font-black text-white/80">{booth.id}</span>
+      </div>
+
+      <div className="absolute inset-x-0 bottom-0 p-5">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-white/50">Gian hàng {booth.id}</p>
+        <h2 className="mt-2 text-xl font-black leading-tight text-white">{booth.name}</h2>
+        <p className="mt-2 line-clamp-2 text-xs font-medium leading-5 text-white/65">{booth.desc}</p>
+        <button
+          type="button"
+          onClick={handleExplore}
+          className="mt-4 inline-flex h-10 items-center gap-2 rounded-lg border border-white/15 bg-white/10 px-4 text-xs font-black text-white backdrop-blur transition-colors hover:bg-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          Khám phá
+          <ArrowRight className="h-3.5 w-3.5" />
+        </button>
+      </div>
+    </article>
+  );
+}
+
 const mapSignals = ['10 gian hàng', 'Live routing'];
 
 export function VirtualExpo() {
@@ -228,7 +269,19 @@ export function VirtualExpo() {
             ))}
           </div>
         </div>
-        <div className="overflow-x-auto border border-slate-200 bg-white p-1 shadow-[0_22px_54px_rgba(15,23,42,0.14)]">
+        <div className="md:hidden">
+          <div className="mb-3 flex items-center gap-2 px-1 text-[11px] font-bold text-slate-500">
+            <MoveHorizontal className="h-4 w-4 text-blue-600" />
+            Vuốt ngang để khám phá 10 gian hàng
+          </div>
+          <div className="mobile-snap-scroll -mx-3 flex snap-x snap-mandatory gap-3 overflow-x-auto px-3 pb-5">
+            {booths.map((booth) => (
+              <MobileBoothCard key={booth.id} booth={booth} />
+            ))}
+          </div>
+        </div>
+
+        <div className="hidden overflow-x-auto border border-slate-200 bg-white p-1 shadow-[0_22px_54px_rgba(15,23,42,0.14)] md:block">
           <div data-reveal style={{ '--reveal-delay': '90ms' } as CSSProperties} className="expo-map-canvas relative h-[360px] min-w-[1360px] overflow-hidden">
             <div className="absolute left-4 top-4 z-[3]">
               <h2 className="text-sm font-black uppercase tracking-[0.02em] text-white">Sơ đồ triển lãm</h2>

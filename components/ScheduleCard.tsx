@@ -27,8 +27,8 @@ interface ScheduleCardProps {
 
 export default function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCardProps) {
   return (
-    <Card className="p-4 sm:p-6 border-0 shadow-sm hover:shadow-md transition-shadow bg-white">
-      <div className="flex gap-4 items-start">
+    <Card className="border-0 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-6">
+      <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start">
         {/* Colored dot indicator with icon */}
         <div
           className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0"
@@ -38,24 +38,24 @@ export default function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCar
         </div>
 
         {/* Content */}
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-lg text-foreground">{schedule.label}</h3>
+        <div className="min-w-0">
+          <h3 className="break-words text-lg font-bold text-foreground">{schedule.label}</h3>
           <p className="text-sm text-foreground/70 mt-1">
             {schedule.time} - {schedule.end} ({schedule.duration})
           </p>
-          <p className="text-sm text-foreground/60 mt-2">{schedule.detail}</p>
+          <p className="mt-2 break-words text-sm text-foreground/60">{schedule.detail}</p>
           {schedule.speaker && (
             <p className="text-sm text-foreground/60 mt-1">🎤 {schedule.speaker}</p>
           )}
         </div>
 
         {/* Action buttons */}
-        <div className="flex gap-2 flex-shrink-0">
+        <div className="flex gap-2 pl-14 sm:pl-0">
           <Button
             size="sm"
             variant="outline"
             onClick={onEdit}
-            className="border-border hover:bg-blue-50"
+            className="flex-1 border-border hover:bg-blue-50 sm:flex-none"
           >
             <Edit className="w-4 h-4 mr-1" />
             <span className="hidden sm:inline">Sửa</span>

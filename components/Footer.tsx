@@ -20,15 +20,15 @@ export function Footer() {
               <h3 className="text-2xl font-black tracking-[-0.02em]">Sẵn sàng tham quan?</h3>
               <p className="mt-2 text-sm font-medium text-blue-100">Đăng ký ngay để không bỏ lỡ sự kiện nổi bật năm 2026.</p>
             </div>
-            <Button className="h-11 rounded-[0.85rem] bg-white px-6 text-sm font-black text-blue-700 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-blue-50 active:scale-[0.98]">
+            <Button className="h-11 w-full rounded-[0.85rem] bg-white px-6 text-sm font-black text-blue-700 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-blue-50 active:scale-[0.98] sm:w-auto">
               Đăng ký miễn phí
               <Send className="ml-2 h-4 w-4" />
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-10 border-b border-slate-200 pb-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_0.75fr_1.2fr]">
-          <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 border-b border-slate-200 pb-12 md:grid-cols-2 lg:grid-cols-[1.4fr_0.75fr_0.75fr_1.2fr]">
+          <div className="col-span-2 space-y-4 lg:col-span-1">
             <Link href="/" className="inline-flex">
               <img src="/logos/fce-logo.svg" alt="Future Consumer Expo 2026" className="h-12 w-[214px] object-contain object-left" />
             </Link>
@@ -52,7 +52,7 @@ export function Footer() {
             </div>
           ))}
 
-          <div className="space-y-6">
+          <div className="col-span-2 space-y-6 md:col-span-1">
             <div>
               <h4 className="mb-4 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Theo dõi chúng tôi</h4>
               <div className="flex gap-2">
@@ -73,11 +73,11 @@ export function Footer() {
                 <Mail className="h-3.5 w-3.5 text-blue-600" />
                 Đăng ký nhận tin
               </h4>
-              <div className="flex gap-2">
+              <div className="flex min-w-0 gap-2">
                 <Input
                   type="email"
                   placeholder="Nhập email của bạn"
-                  className="h-10 rounded-[0.75rem] border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-100"
+                  className="h-10 min-w-0 rounded-[0.75rem] border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:border-blue-400 focus:ring-blue-100"
                 />
                 <Button className="h-10 rounded-[0.75rem] bg-blue-600 px-3 text-white transition-all duration-300 hover:bg-blue-700 active:scale-[0.95]">
                   <Send className="h-4 w-4" />
@@ -89,7 +89,7 @@ export function Footer() {
 
         <div className="flex flex-col items-center justify-between gap-3 pt-6 md:flex-row">
           <p className="text-[11px] font-medium text-slate-400">&copy; 2026 Future Consumer Expo. All rights reserved.</p>
-          <div className="flex items-center gap-5">
+          <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2">
             <Link href="#" className="text-[11px] font-semibold text-slate-400 transition-colors duration-300 hover:text-blue-700">
               Điều khoản sử dụng
             </Link>

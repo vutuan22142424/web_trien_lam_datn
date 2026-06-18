@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Link from 'next/link';
+import { ArrowLeft, LockKeyhole } from 'lucide-react';
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -31,21 +32,22 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5 p-4">
-      <Card className="w-full max-w-md border-border shadow-lg">
-        <CardHeader className="space-y-2">
-          <div className="flex justify-center mb-4">
-            <div className="w-12 h-12 bg-gradient-to-br from-primary to-accent rounded-lg flex items-center justify-center">
-              <span className="font-bold text-primary-foreground text-xl">🔐</span>
+    <main className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#f3f7fb] p-4 sm:p-6">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_15%,rgba(37,99,235,0.14),transparent_28%),radial-gradient(circle_at_85%_80%,rgba(14,165,233,0.10),transparent_26%)]" />
+      <Card className="relative w-full max-w-md rounded-[1.5rem] border-slate-200 bg-white/95 shadow-[0_28px_90px_rgba(30,64,175,0.14)] backdrop-blur">
+        <CardHeader className="space-y-2 px-5 pt-6 sm:px-8 sm:pt-8">
+          <div className="mb-4 flex justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-950 text-white shadow-[0_14px_32px_rgba(15,23,42,0.22)]">
+              <LockKeyhole className="h-5 w-5" />
             </div>
           </div>
-          <CardTitle className="text-center text-2xl">Đăng Nhập Quản Trị</CardTitle>
-          <CardDescription className="text-center">
+          <CardTitle className="text-balance text-center text-2xl font-black tracking-[-0.03em]">Đăng nhập quản trị</CardTitle>
+          <CardDescription className="text-center text-sm">
             Truy cập bảng điều khiển quản lý
           </CardDescription>
         </CardHeader>
 
-        <CardContent>
+        <CardContent className="px-5 pb-6 sm:px-8 sm:pb-8">
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-red-100 border border-red-300 rounded-lg">
@@ -88,7 +90,7 @@ export default function LoginPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-primary to-secondary text-primary-foreground border-0"
+              className="h-11 w-full border-0 bg-blue-600 font-bold text-white hover:bg-blue-700"
             >
               {loading ? 'Đang Đăng Nhập...' : 'Đăng Nhập'}
             </Button>
@@ -103,12 +105,13 @@ export default function LoginPage() {
           </form>
 
           <div className="mt-6 text-center">
-            <Link href="/" className="text-sm text-primary hover:text-primary/80 transition-colors">
-              ← Quay Lại Trang Chủ
+            <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-blue-700 transition-colors hover:text-blue-900">
+              <ArrowLeft className="h-4 w-4" />
+              Quay lại trang chủ
             </Link>
           </div>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }

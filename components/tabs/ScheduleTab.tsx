@@ -63,14 +63,14 @@ export function ScheduleTab() {
   return (
     <div className="space-y-6">
       {/* Header with Add Button */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-3xl font-bold text-foreground mb-2">Quản Lý Lịch Sự Kiện</h2>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <h2 className="mb-2 text-balance text-2xl font-black tracking-[-0.03em] text-foreground sm:text-3xl">Quản Lý Lịch Sự Kiện</h2>
           <p className="text-foreground/70">Tổng cộng {schedules.length} sự kiện</p>
         </div>
         <Button
           onClick={handleAddClick}
-          className="bg-gradient-to-r from-primary to-secondary text-primary-foreground border-0 flex items-center gap-2"
+          className="flex w-full items-center gap-2 border-0 bg-blue-600 text-white hover:bg-blue-700 sm:w-auto"
         >
           <Plus size={20} />
           Thêm Mới
@@ -87,7 +87,7 @@ export function ScheduleTab() {
 
       {/* Schedule List */}
       {schedules.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-border rounded-lg">
+        <div className="rounded-2xl border-2 border-dashed border-border px-4 py-16 text-center sm:py-20">
           <p className="text-foreground/70 mb-4">Chưa có lịch sự kiện nào</p>
           <Button onClick={handleAddClick} variant="outline">
             <Plus size={20} className="mr-2" />

@@ -175,8 +175,8 @@ function BoothArticle({ booth, index }: { booth: HighlightBooth; index: number }
       }
       className="overflow-hidden rounded-[1.25rem] border border-slate-200 bg-white shadow-[0_22px_70px_rgba(15,23,42,0.08)]"
     >
-      <div className="grid lg:grid-cols-[0.72fr_1.28fr]">
-        <div className="relative min-h-[260px] overflow-hidden bg-slate-950 lg:min-h-full">
+      <div className="grid min-w-0 lg:grid-cols-[0.72fr_1.28fr]">
+        <div className="relative min-h-[220px] overflow-hidden bg-slate-950 sm:min-h-[280px] lg:min-h-full">
           <Image src={booth.image} alt={booth.title} fill sizes="(min-width: 1024px) 36vw, 100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-slate-950/10 to-transparent" />
           <div className="absolute bottom-5 left-5 right-5">
@@ -185,12 +185,12 @@ function BoothArticle({ booth, index }: { booth: HighlightBooth; index: number }
           </div>
         </div>
 
-        <div className="p-5 sm:p-7 lg:p-8">
-          <div className="flex flex-wrap items-start gap-4">
-            <span className="font-mono text-4xl font-black leading-none tabular-nums text-[var(--highlight-accent)]">{booth.id}</span>
+        <div className="min-w-0 p-5 sm:p-7 lg:p-8">
+          <div className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] items-start gap-3 sm:gap-4">
+            <span className="font-mono text-3xl font-black leading-none tabular-nums text-[var(--highlight-accent)] sm:text-4xl">{booth.id}</span>
             <div className="min-w-0">
               <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-400">{booth.brand}</p>
-              <h3 className="mt-1 text-2xl font-black leading-tight text-slate-950">{booth.title}</h3>
+              <h3 className="mt-1 break-words text-xl font-black leading-tight text-slate-950 sm:text-2xl">{booth.title}</h3>
             </div>
           </div>
 
@@ -265,14 +265,14 @@ export function BrandHighlights() {
         <div data-reveal className="mb-8 sm:mb-10">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.22em] text-blue-600">Featured booths</p>
-            <h2 className="mt-2 text-2xl font-black uppercase tracking-[-0.035em] text-slate-950 sm:text-4xl">
+            <h2 className="mt-2 max-w-4xl text-balance text-2xl font-black uppercase leading-[1.05] tracking-[-0.035em] text-slate-950 sm:text-4xl">
               Khám phá đầy đủ các gian hàng
             </h2>
           </div>
         </div>
 
         <div data-reveal className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex max-w-full items-center gap-2 sm:gap-3">
             <button
               type="button"
               onClick={() => goToBooth(activeIndex - 1)}
@@ -281,7 +281,7 @@ export function BrandHighlights() {
             >
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <div className="min-w-[112px] rounded-[0.9rem] border border-slate-200 bg-white px-4 py-2.5 text-center shadow-[0_12px_30px_rgba(15,23,42,0.06)]">
+            <div className="min-w-[104px] rounded-[0.9rem] border border-slate-200 bg-white px-3 py-2.5 text-center shadow-[0_12px_30px_rgba(15,23,42,0.06)] sm:min-w-[112px] sm:px-4">
               <span className="font-mono text-sm font-black tabular-nums text-slate-950">
                 {activeBooth.id} / {totalLabel}
               </span>
@@ -297,7 +297,7 @@ export function BrandHighlights() {
             </button>
           </div>
 
-          <div className="flex max-w-full gap-2 overflow-x-auto pb-1">
+          <div className="mobile-snap-scroll flex max-w-full snap-x gap-2 overflow-x-auto pb-2">
             {booths.map((booth, index) => {
               const isActive = activeIndex === index;
 

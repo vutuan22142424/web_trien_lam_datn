@@ -108,7 +108,7 @@ export default function ScheduleModal({ open, onOpenChange, schedule, onSave, is
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[92dvh] w-full max-w-md overflow-y-auto p-5 sm:p-6">
         <DialogHeader>
           <DialogTitle>
             {schedule ? 'Sửa Lịch Trình' : 'Thêm Lịch Trình Mới'}
@@ -129,7 +129,7 @@ export default function ScheduleModal({ open, onOpenChange, schedule, onSave, is
           </div>
 
           {/* Time */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="time">Giờ Bắt Đầu</Label>
               <Input
@@ -227,20 +227,20 @@ export default function ScheduleModal({ open, onOpenChange, schedule, onSave, is
             />
           </div>
 
-          <DialogFooter className="gap-2 sm:gap-0">
+          <DialogFooter className="gap-2 sm:gap-2">
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
               disabled={isLoading}
-              className="border-border"
+              className="w-full border-border sm:w-auto"
             >
               Hủy
             </Button>
             <Button
               type="submit"
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="w-full bg-blue-600 text-white hover:bg-blue-700 sm:w-auto"
             >
               {isLoading ? 'Đang lưu...' : 'Lưu Thay Đổi'}
             </Button>

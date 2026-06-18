@@ -34,7 +34,7 @@ export default function DeleteConfirmDialog({
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
-        <div className="flex gap-2 justify-end">
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <AlertDialogCancel onClick={() => onOpenChange(false)} disabled={isLoading}>
             Hủy
           </AlertDialogCancel>

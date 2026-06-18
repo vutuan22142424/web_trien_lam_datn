@@ -41,7 +41,7 @@ export function NewsSection() {
           </button>
         </div>
 
-        <div data-reveal className="grid grid-cols-1 gap-5 md:grid-cols-3">
+        <div data-reveal className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {news.map((item) => (
             <article key={item.title} className="motion-card group overflow-hidden rounded-[1.2rem] border border-slate-200 bg-white shadow-[0_18px_55px_rgba(15,23,42,0.08)] hover:border-blue-200">
               <div className="relative h-48 overflow-hidden bg-slate-100">
