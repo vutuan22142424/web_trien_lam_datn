@@ -16,7 +16,7 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
+import { CommandHistoryTable } from '@/components/CommandHistoryTable'; // ← THÊM
 type MqttCommand = {
   id: string;
   timestamp: string;
@@ -330,84 +330,84 @@ function EmergencyControls({ robot }: { robot: RobotData }) {
   );
 }
 
-function MqttCommandHistory({ robot }: { robot: RobotData }) {
-  return (
-    <ShellPanel>
-      <div className="p-5 sm:p-7">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-600">MQTT command stream</p>
-            <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Lịch sử lệnh gửi tới robot</h2>
-          </div>
-          <span className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
-            <span className="h-2 w-2 rounded-full bg-emerald-500" />
-            {robot.mqtt.connection}
-          </span>
-        </div>
+// function MqttCommandHistory({ robot }: { robot: RobotData }) {
+//   return (
+//     <ShellPanel>
+//       <div className="p-5 sm:p-7">
+//         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+//           <div>
+//             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-600">MQTT command stream</p>
+//             <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Lịch sử lệnh gửi tới robot</h2>
+//           </div>
+//           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
+//             <span className="h-2 w-2 rounded-full bg-emerald-500" />
+//             {robot.mqtt.connection}
+//           </span>
+//         </div>
 
-        <div className="mt-5 rounded-[1rem] bg-slate-950 p-4 text-white">
-          <div className="grid gap-4 text-xs sm:grid-cols-3">
-            <div>
-              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Robot state</p>
-              <p className="mt-1 font-mono font-bold">{robot.telemetry.state.state}</p>
-            </div>
-            <div>
-              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Broker</p>
-              <p className="mt-1 font-mono font-bold">{robot.mqtt.broker}</p>
-            </div>
-            <div>
-              <p className="font-bold uppercase tracking-[0.16em] text-white/35">Client ID</p>
-              <p className="mt-1 truncate font-mono font-bold">{robot.mqtt.clientId}</p>
-            </div>
-          </div>
-          <div className="mt-4 h-px bg-white/10" />
-          <p className="mt-3 font-mono text-[11px] font-semibold text-white/55">Last sync: {robot.mqtt.lastSync}</p>
-        </div>
+//         <div className="mt-5 rounded-[1rem] bg-slate-950 p-4 text-white">
+//           <div className="grid gap-4 text-xs sm:grid-cols-3">
+//             <div>
+//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Robot state</p>
+//               <p className="mt-1 font-mono font-bold">{robot.telemetry.state.state}</p>
+//             </div>
+//             <div>
+//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Broker</p>
+//               <p className="mt-1 font-mono font-bold">{robot.mqtt.broker}</p>
+//             </div>
+//             <div>
+//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Client ID</p>
+//               <p className="mt-1 truncate font-mono font-bold">{robot.mqtt.clientId}</p>
+//             </div>
+//           </div>
+//           <div className="mt-4 h-px bg-white/10" />
+//           <p className="mt-3 font-mono text-[11px] font-semibold text-white/55">Last sync: {robot.mqtt.lastSync}</p>
+//         </div>
 
-        <div className="mt-5 space-y-3">
-          {robot.mqtt.commands.map((command) => {
-            const meta = statusMeta[command.status] ?? statusMeta.ACCEPTED;
-            const StatusIcon = meta.icon;
+//         <div className="mt-5 space-y-3">
+//           {robot.mqtt.commands.map((command) => {
+//             const meta = statusMeta[command.status] ?? statusMeta.ACCEPTED;
+//             const StatusIcon = meta.icon;
 
-            return (
-              <article
-                key={command.id}
-                className="rounded-[1rem] bg-slate-50 p-4 ring-1 ring-slate-200 transition-all duration-200 hover:bg-white hover:shadow-[0_14px_34px_rgba(15,23,42,0.07)]"
-              >
-                <div className="flex items-start justify-between gap-3">
-                  <div className="min-w-0">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <p className="font-mono text-sm font-black text-slate-950">{command.command}</p>
-                      <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black', meta.className)}>
-                        <StatusIcon className="h-3 w-3" strokeWidth={2} />
-                        {meta.label}
-                      </span>
-                    </div>
-                    <p className="mt-2 truncate font-mono text-[11px] font-semibold text-slate-500">{command.topic}</p>
-                    <p className="mt-1 truncate font-mono text-[10px] font-semibold text-slate-400">feedback: {command.feedbackTopic}</p>
-                  </div>
-                  <div className="shrink-0 text-right">
-                    <p className="font-mono text-xs font-black text-slate-950">{command.latencyMs}ms</p>
-                    <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">QoS {command.qos}</p>
-                  </div>
-                </div>
+//             return (
+//               <article
+//                 key={command.id}
+//                 className="rounded-[1rem] bg-slate-50 p-4 ring-1 ring-slate-200 transition-all duration-200 hover:bg-white hover:shadow-[0_14px_34px_rgba(15,23,42,0.07)]"
+//               >
+//                 <div className="flex items-start justify-between gap-3">
+//                   <div className="min-w-0">
+//                     <div className="flex flex-wrap items-center gap-2">
+//                       <p className="font-mono text-sm font-black text-slate-950">{command.command}</p>
+//                       <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black', meta.className)}>
+//                         <StatusIcon className="h-3 w-3" strokeWidth={2} />
+//                         {meta.label}
+//                       </span>
+//                     </div>
+//                     <p className="mt-2 truncate font-mono text-[11px] font-semibold text-slate-500">{command.topic}</p>
+//                     <p className="mt-1 truncate font-mono text-[10px] font-semibold text-slate-400">feedback: {command.feedbackTopic}</p>
+//                   </div>
+//                   <div className="shrink-0 text-right">
+//                     <p className="font-mono text-xs font-black text-slate-950">{command.latencyMs}ms</p>
+//                     <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">QoS {command.qos}</p>
+//                   </div>
+//                 </div>
 
-                <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-[0.75rem] bg-white px-3 py-2 font-mono text-[11px] font-semibold leading-5 text-slate-600 ring-1 ring-slate-200">
-                  {command.payload}
-                </pre>
+//                 <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-[0.75rem] bg-white px-3 py-2 font-mono text-[11px] font-semibold leading-5 text-slate-600 ring-1 ring-slate-200">
+//                   {command.payload}
+//                 </pre>
 
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-slate-400">
-                  <span>{command.operator}</span>
-                  <span className="font-mono">{command.timestamp}</span>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </div>
-    </ShellPanel>
-  );
-}
+//                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-slate-400">
+//                   <span>{command.operator}</span>
+//                   <span className="font-mono">{command.timestamp}</span>
+//                 </div>
+//               </article>
+//             );
+//           })}
+//         </div>
+//       </div>
+//     </ShellPanel>
+//   );
+// }
 
 export function ExhibitionTab({ robot }: ExhibitionTabProps) {
   return (
@@ -419,7 +419,14 @@ export function ExhibitionTab({ robot }: ExhibitionTabProps) {
         <EmergencyControls robot={robot} />
       </section>
 
-      <MqttCommandHistory robot={robot} />
+      {/* ← THAY MqttCommandHistory mock bằng phần này */}
+      <section className="rounded-[1.45rem] border border-slate-200/90 bg-white p-5 shadow-[0_20px_56px_rgba(15,23,42,0.07)] sm:p-7">
+        <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-600">MQTT command stream</p>
+        <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Lịch sử lệnh gửi tới robot</h2>
+        <div className="mt-5">
+          <CommandHistoryTable />
+        </div>
+      </section>
     </div>
   );
 }
