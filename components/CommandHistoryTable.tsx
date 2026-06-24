@@ -56,7 +56,7 @@ export function CommandHistoryTable() {
 
   useEffect(() => {
     const fetchData = () => {
-      const url = filter ? `/api/commands?status=${filter}` : `/api/commands`; // kiểm tra xem có cần lọc theo filter không 
+      const url = filter ? `/api/commands?status=${filter}&limit=200` : `/api/commands?limit=200`; // kiểm tra xem có cần lọc theo filter không 
       fetch(url)
         .then(r => r.json())
           .then(d => {
