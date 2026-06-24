@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CommandHistoryTable } from '@/components/CommandHistoryTable'; // ← THÊM
+import { RobotLiveMap } from '@/components/RobotLiveMap';
 type MqttCommand = {
   id: string;
   timestamp: string;
@@ -43,6 +44,7 @@ type QuickRobotAction = {
 
 type RobotData = {
   name: string;
+  poseRaw?: { x: number; y: number; yaw: number } | null;   // ← THÊM
   position: {
     zone: string;
     x: number;
@@ -73,6 +75,7 @@ type RobotData = {
 
 interface ExhibitionTabProps {
   robot: RobotData;
+  publishCommand: (topic: string, payload: any) => void;
 }
 
 const statusMeta: Record<string, { label: string; className: string; icon: LucideIcon }> = {
@@ -134,79 +137,22 @@ function ShellPanel({ children, className }: { children: React.ReactNode; classN
   );
 }
 
-function RobotMap({ robot }: { robot: RobotData }) {
-  const position = robot.position;
 
+
+function RobotMapSection({ robot }: { robot: RobotData }) {
   return (
     <ShellPanel>
       <div className="p-5 sm:p-7">
         <p className="text-[11px] font-black uppercase tracking-[0.18em] text-blue-600">Live floor map</p>
         <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Bản đồ vị trí robot</h2>
 
-        <div className="mt-5 flex items-center gap-2 text-[11px] font-bold text-slate-400 sm:hidden">
-          <MoveHorizontal className="h-4 w-4 text-blue-600" />
-          Vuốt ngang để xem toàn bộ bản đồ
-        </div>
-
-        <div className="mobile-snap-scroll mt-3 overflow-x-auto rounded-[1.15rem] bg-slate-100 p-1 ring-1 ring-slate-200 sm:mt-5">
-          <div className="relative min-h-[350px] min-w-[720px] overflow-hidden rounded-[0.95rem] bg-[#eaf0f6] sm:min-h-[400px] sm:min-w-0">
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(71,85,105,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(71,85,105,0.10)_1px,transparent_1px)] bg-[size:36px_36px]" />
-
-            <div className="absolute inset-x-[8%] top-[43%] h-[14%] rounded-[0.9rem] border border-slate-300 bg-white/90 shadow-[inset_0_1px_0_rgba(255,255,255,0.92)]">
-              <div className="flex h-full items-center justify-center">
-                <div className="rounded-full bg-slate-950 px-4 py-2 text-[10px] font-black uppercase tracking-[0.18em] text-white">
-                  Smart Guided Experience Lane
-                </div>
-              </div>
-            </div>
-
-            <div className="absolute left-[3%] top-[43%] grid h-[14%] w-[8%] place-items-center rounded-[0.8rem] border border-cyan-200 bg-cyan-50 text-center text-[10px] font-black uppercase tracking-[0.1em] text-cyan-700">
-              Gate A
-            </div>
-            <div className="absolute right-[3%] top-[43%] grid h-[14%] w-[8%] place-items-center rounded-[0.8rem] border border-cyan-200 bg-cyan-50 text-center text-[10px] font-black uppercase tracking-[0.1em] text-cyan-700">
-              Gate B
-            </div>
-
-            {mapZones.map((zone) => (
-              <div
-                key={zone.name}
-                className={cn(
-                  'absolute grid place-items-center rounded-[0.85rem] border px-2 text-center text-[11px] font-black shadow-[0_10px_22px_rgba(15,23,42,0.07)]',
-                  zone.className,
-                  zone.tone,
-                )}
-              >
-                {zone.name}
-              </div>
-            ))}
-
-            <div className="absolute left-[18%] top-[49.5%] h-1 w-[40%] rounded-full bg-blue-500/20" />
-            <div className="absolute left-[32%] top-[49.5%] h-1 w-[26%] rounded-full bg-blue-500/45" />
-
-            <div
-              className="absolute z-10 -translate-x-1/2 -translate-y-1/2"
-              style={{ left: `${position.x}%`, top: `${position.y}%` }}
-              aria-label={`Robot đang ở ${position.zone}`}
-            >
-              <div className="relative grid h-16 w-16 place-items-center">
-                <div className="absolute inset-0 rounded-full bg-blue-500/20 motion-safe:animate-ping" />
-                <div className="absolute inset-2 rounded-full bg-blue-500/20" />
-                <div className="relative grid h-11 w-11 place-items-center rounded-full bg-slate-950 text-white shadow-[0_18px_34px_rgba(15,23,42,0.28)] ring-4 ring-white">
-                  <Navigation
-                    className="h-5 w-5"
-                    strokeWidth={2}
-                    style={{ transform: `rotate(${position.heading}deg)` }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+        <div className="mt-5 h-[400px]">
+          <RobotLiveMap pose={robot.poseRaw ?? null} />
         </div>
       </div>
     </ShellPanel>
   );
 }
-
 function BatteryPanel({ battery }: { battery: RobotData['telemetry']['battery'] }) {
   const soc = Math.max(0, Math.min(100, Math.round(battery.soc)));
   const isLow = soc <= 20;
@@ -264,38 +210,45 @@ function BatteryPanel({ battery }: { battery: RobotData['telemetry']['battery'] 
   );
 }
 
-function EmergencyControls({ robot }: { robot: RobotData }) {
+function EmergencyControls({ robot, publishCommand }: { robot: RobotData; publishCommand: (topic: string, payload: any) => void }) {
   const [isPaused, setIsPaused] = useState(robot.telemetry.state.state === 'PAUSED');
   const [activeAction, setActiveAction] = useState<string | null>(null);
 
-  const actions = useMemo(() => {
-    const dock = robot.mqtt.quickActions.find((action) => action.command === 'gotodock');
-    const pause = robot.mqtt.quickActions.find((action) => action.command === 'pause');
-    const resume = robot.mqtt.quickActions.find((action) => action.command === 'resume');
-
-    return { dock, pause, resume };
-  }, [robot.mqtt.quickActions]);
-
-  const handlePauseToggle = () => {
-    setIsPaused((current) => !current);
-    setActiveAction(isPaused ? actions.resume?.id ?? 'resume' : actions.pause?.id ?? 'pause');
+const handleStop = () => {
+    const ok = confirm('⚠️ Xác nhận DỪNG robot?');
+    if (!ok) return;
+    publishCommand('robot/powerswitch/cmd', 'off');
+    setActiveAction('power-off');
   };
 
+  const handlePauseToggle = () => {
+    if (isPaused) {
+      publishCommand('robot/cmd/resume', {});
+    } else {
+      publishCommand('robot/cmd/pause', {});
+    }
+    setIsPaused((current) => !current);
+    setActiveAction(isPaused ? 'resume' : 'pause');
+  };
+    const handleDock = () => {
+    publishCommand('robot/cmd/gotodock', {});
+    setActiveAction('gotodock');
+  };
   return (
     <ShellPanel className="h-full">
       <div className="flex h-full min-h-[270px] flex-col justify-center gap-3 p-5 sm:p-6">
         <button
           type="button"
-          onClick={() => setActiveAction('emergency-power-off')}
+           onClick={handleStop}
           className={cn(
             'group flex min-h-16 items-center justify-center gap-3 rounded-[1rem] border px-5 text-base font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400 focus-visible:ring-offset-2 active:scale-[0.99]',
-            activeAction === 'emergency-power-off'
+            activeAction === 'power-off'
               ? 'border-rose-600 bg-rose-600 text-white shadow-[0_14px_28px_rgba(225,29,72,0.22)]'
               : 'border-rose-200 bg-rose-50 text-rose-700 hover:border-rose-300 hover:bg-rose-100',
           )}
         >
           <Power className="h-5 w-5" strokeWidth={2} />
-          Tắt nguồn khẩn cấp
+          Tắt nguồn Robot
         </button>
 
         <button
@@ -303,7 +256,7 @@ function EmergencyControls({ robot }: { robot: RobotData }) {
           onClick={handlePauseToggle}
           className={cn(
             'flex min-h-16 items-center justify-center gap-3 rounded-[1rem] border px-5 text-base font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2 active:scale-[0.99]',
-            activeAction === (isPaused ? actions.pause?.id : actions.resume?.id)
+            activeAction === (isPaused ? 'pause' : 'resume')
               ? 'border-amber-500 bg-amber-500 text-white shadow-[0_14px_28px_rgba(245,158,11,0.20)]'
               : 'border-amber-200 bg-amber-50 text-amber-800 hover:border-amber-300 hover:bg-amber-100',
           )}
@@ -314,10 +267,10 @@ function EmergencyControls({ robot }: { robot: RobotData }) {
 
         <button
           type="button"
-          onClick={() => setActiveAction(actions.dock?.id ?? 'gotodock')}
+          onClick={handleDock}
           className={cn(
             'flex min-h-16 items-center justify-center gap-3 rounded-[1rem] border px-5 text-base font-black transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 active:scale-[0.99]',
-            activeAction === (actions.dock?.id ?? 'gotodock')
+            activeAction === ( 'gotodock')
               ? 'border-blue-600 bg-blue-600 text-white shadow-[0_14px_28px_rgba(37,99,235,0.20)]'
               : 'border-blue-200 bg-blue-50 text-blue-700 hover:border-blue-300 hover:bg-blue-100',
           )}
@@ -330,96 +283,17 @@ function EmergencyControls({ robot }: { robot: RobotData }) {
   );
 }
 
-// function MqttCommandHistory({ robot }: { robot: RobotData }) {
-//   return (
-//     <ShellPanel>
-//       <div className="p-5 sm:p-7">
-//         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-//           <div>
-//             <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-600">MQTT command stream</p>
-//             <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Lịch sử lệnh gửi tới robot</h2>
-//           </div>
-//           <span className="inline-flex w-fit items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-xs font-black text-emerald-700">
-//             <span className="h-2 w-2 rounded-full bg-emerald-500" />
-//             {robot.mqtt.connection}
-//           </span>
-//         </div>
 
-//         <div className="mt-5 rounded-[1rem] bg-slate-950 p-4 text-white">
-//           <div className="grid gap-4 text-xs sm:grid-cols-3">
-//             <div>
-//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Robot state</p>
-//               <p className="mt-1 font-mono font-bold">{robot.telemetry.state.state}</p>
-//             </div>
-//             <div>
-//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Broker</p>
-//               <p className="mt-1 font-mono font-bold">{robot.mqtt.broker}</p>
-//             </div>
-//             <div>
-//               <p className="font-bold uppercase tracking-[0.16em] text-white/35">Client ID</p>
-//               <p className="mt-1 truncate font-mono font-bold">{robot.mqtt.clientId}</p>
-//             </div>
-//           </div>
-//           <div className="mt-4 h-px bg-white/10" />
-//           <p className="mt-3 font-mono text-[11px] font-semibold text-white/55">Last sync: {robot.mqtt.lastSync}</p>
-//         </div>
-
-//         <div className="mt-5 space-y-3">
-//           {robot.mqtt.commands.map((command) => {
-//             const meta = statusMeta[command.status] ?? statusMeta.ACCEPTED;
-//             const StatusIcon = meta.icon;
-
-//             return (
-//               <article
-//                 key={command.id}
-//                 className="rounded-[1rem] bg-slate-50 p-4 ring-1 ring-slate-200 transition-all duration-200 hover:bg-white hover:shadow-[0_14px_34px_rgba(15,23,42,0.07)]"
-//               >
-//                 <div className="flex items-start justify-between gap-3">
-//                   <div className="min-w-0">
-//                     <div className="flex flex-wrap items-center gap-2">
-//                       <p className="font-mono text-sm font-black text-slate-950">{command.command}</p>
-//                       <span className={cn('inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-black', meta.className)}>
-//                         <StatusIcon className="h-3 w-3" strokeWidth={2} />
-//                         {meta.label}
-//                       </span>
-//                     </div>
-//                     <p className="mt-2 truncate font-mono text-[11px] font-semibold text-slate-500">{command.topic}</p>
-//                     <p className="mt-1 truncate font-mono text-[10px] font-semibold text-slate-400">feedback: {command.feedbackTopic}</p>
-//                   </div>
-//                   <div className="shrink-0 text-right">
-//                     <p className="font-mono text-xs font-black text-slate-950">{command.latencyMs}ms</p>
-//                     <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">QoS {command.qos}</p>
-//                   </div>
-//                 </div>
-
-//                 <pre className="mt-3 overflow-x-auto whitespace-pre-wrap break-all rounded-[0.75rem] bg-white px-3 py-2 font-mono text-[11px] font-semibold leading-5 text-slate-600 ring-1 ring-slate-200">
-//                   {command.payload}
-//                 </pre>
-
-//                 <div className="mt-3 flex flex-wrap items-center justify-between gap-2 text-[11px] font-bold text-slate-400">
-//                   <span>{command.operator}</span>
-//                   <span className="font-mono">{command.timestamp}</span>
-//                 </div>
-//               </article>
-//             );
-//           })}
-//         </div>
-//       </div>
-//     </ShellPanel>
-//   );
-// }
-
-export function ExhibitionTab({ robot }: ExhibitionTabProps) {
+export function ExhibitionTab({ robot, publishCommand }: ExhibitionTabProps) {
   return (
     <div className="space-y-6">
-      <RobotMap robot={robot} />
+      <RobotMapSection robot={robot} />
 
       <section aria-label="Pin và điều khiển robot" className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
         <BatteryPanel battery={robot.telemetry.battery} />
-        <EmergencyControls robot={robot} />
+        <EmergencyControls robot={robot} publishCommand={publishCommand} />
       </section>
 
-      {/* ← THAY MqttCommandHistory mock bằng phần này */}
       <section className="rounded-[1.45rem] border border-slate-200/90 bg-white p-5 shadow-[0_20px_56px_rgba(15,23,42,0.07)] sm:p-7">
         <p className="text-[11px] font-black uppercase tracking-[0.18em] text-emerald-600">MQTT command stream</p>
         <h2 className="mt-2 text-2xl font-black tracking-[-0.035em] text-slate-950">Lịch sử lệnh gửi tới robot</h2>

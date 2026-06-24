@@ -6,9 +6,10 @@ import Link from 'next/link';
 import { Activity, BatteryCharging, Bot, CalendarDays, ExternalLink, LayoutDashboard, LogOut, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import robot from '@/public/data/robot.json';
+import robotStatic from '@/public/data/robot.json';
 import { ExhibitionTab } from '@/components/tabs/ExhibitionTab';
 import { ScheduleTab } from '@/components/tabs/ScheduleTab';
+import { useRobotMQTT } from '@/hooks/useRobotMQTT';
 
 type AdminTab = 'exhibition' | 'schedule';
 
@@ -16,10 +17,44 @@ const tabs: Array<{ id: AdminTab; label: string; icon: typeof LayoutDashboard }>
   { id: 'exhibition', label: 'Điều phối triển lãm', icon: LayoutDashboard },
   { id: 'schedule', label: 'Lịch sự kiện', icon: CalendarDays },
 ];
-
+const stateLabel: Record<string, string> = {
+  IDLE:      '😴 IDLE',
+  EXECUTING: '🚀 EXECUTING',
+  WAITING:   '⏳ WAITING',
+  PAUSED:    '⏸ PAUSED',
+  DOCKING:   '🔌 DOCKING',
+  RESTING:   '💤 RESTING',
+  CHARGING:  '🔋 CHARGING',
+};
 export default function AdminDashboard() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<AdminTab>('exhibition');
+  // ── Data động từ MQTT (HiveMQ) ──
+  const { isConnected, battery, robotState, pose, feedback, publishCommand } = useRobotMQTT();
+    // ── Merge: field tĩnh (tên, mapZones...) giữ nguyên từ robot.json,
+  //    field động (battery, state, position, mqtt.connection) lấy từ MQTT thật ──
+  const robot = {
+    ...robotStatic,
+    poseRaw: pose,
+    telemetry: {
+      ...robotStatic.telemetry,
+      battery: {
+        ...robotStatic.telemetry.battery,
+        soc: battery ?? robotStatic.telemetry.battery.soc,
+      },
+      state: {
+        ...robotStatic.telemetry.state,
+        state: robotState ?? robotStatic.telemetry.state.state,
+      },
+    },
+    position: pose
+      ? { ...robotStatic.position, x: pose.x, y: pose.y, heading: (pose.yaw * 180) / Math.PI }
+      : robotStatic.position,
+    mqtt: {
+      ...robotStatic.mqtt,
+      connection: isConnected ? 'Online' : 'Offline',
+    },
+  };
   const batterySoc = Math.max(0, Math.min(100, Math.round(robot.telemetry.battery.soc)));
   const batteryBarClass = robot.telemetry.battery.charging
     ? 'from-sky-500 via-blue-500 to-cyan-400'
@@ -86,9 +121,17 @@ export default function AdminDashboard() {
                 <span className="grid h-8 w-8 place-items-center rounded-[0.75rem] bg-slate-100 text-slate-700 ring-1 ring-slate-200">
                   <Activity className="h-4 w-4" strokeWidth={1.8} />
                 </span>
-                <div className="min-w-0">
-                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Trạng thái</p>
-                  <p className="truncate font-mono text-xs font-black text-slate-950">{robot.telemetry.state.state}</p>
+                  <div className="min-w-0 flex flex-col">
+                  <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">
+                    Trạng thái
+                  </p>
+
+                  <p className="truncate font-mono text-xs font-black text-slate-950">
+                    {robot.telemetry.state.state
+                      ? (stateLabel[robot.telemetry.state.state.toUpperCase()] ??
+                        robot.telemetry.state.state)
+                      : '—'}
+                  </p>
                 </div>
               </div>
             </div>
@@ -141,7 +184,9 @@ export default function AdminDashboard() {
           })}
         </nav>
 
-        {activeTab === 'exhibition' ? <ExhibitionTab robot={robot} /> : <ScheduleTab />}
+        {activeTab === 'exhibition'
+  ? <ExhibitionTab robot={robot} publishCommand={publishCommand} />
+  : <ScheduleTab />}
       </main>
 
       <footer className="relative z-10 mx-auto mt-10 max-w-[1500px] px-4 pb-8 text-xs font-semibold text-slate-400 sm:px-6">
