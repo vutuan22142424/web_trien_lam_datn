@@ -79,7 +79,16 @@ export function CommandHistoryTable() {
     await fetch(`/api/commands/${id}`, { method: 'DELETE' });
     setData(prev => prev.filter(d => d._id !== id)); // xóa khỏi UI ngay
   };
-
+const deleteBulk = async (count: number) => {
+  if (!confirm(`Xóa ${count} lệnh cũ nhất?`)) return;
+  // Sắp xếp theo thời gian tăng dần → lấy `count` cái cũ nhất
+  const oldest = [...data]
+    .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+    .slice(0, count);
+  await Promise.all(oldest.map(d => fetch(`/api/commands/${d._id}`, { method: 'DELETE' })));
+  const deletedIds = new Set(oldest.map(d => d._id));
+  setData(prev => prev.filter(d => !deletedIds.has(d._id)));
+};
   const rows = filter ? data.filter(d => d.latestStatus?.toUpperCase() === filter.toUpperCase()) : data;
 
   return (
@@ -114,9 +123,25 @@ export function CommandHistoryTable() {
               }
             >
               {s}
-            </button>
+            </button>           
           );
         })}
+        <div className="flex items-center gap-1.5 ml-auto">
+    <span className="text-[10px] uppercase tracking-wide" style={{ color: '#aaa' }}>Xóa các lệnh cũ:</span>
+    {[5, 10, 20].map(n => (
+      <button
+        key={n}
+        onClick={() => deleteBulk(n)}
+        disabled={data.length === 0}
+        className="text-[11px] px-2.5 py-1 rounded-full border transition-all disabled:opacity-40"
+        style={{ background: '#FCEBEB', color: '#791F1F', borderColor: '#F7C1C1' }}
+        onMouseEnter={e => (e.currentTarget.style.background = '#F7C1C1')}
+        onMouseLeave={e => (e.currentTarget.style.background = '#FCEBEB')}
+      >
+        -{n}
+      </button>
+    ))}
+  </div>
       </div>
 
       {/* List */}
@@ -130,7 +155,8 @@ export function CommandHistoryTable() {
           Chưa có dữ liệu
         </div>
       ) : (
-        <div className="space-y-1.5">
+        <div className="space-y-1.5 max-h-[520px] overflow-y-auto pr-1 rounded-xl"
+          style={{ scrollbarWidth: 'thin', scrollbarColor: '#AFA9EC transparent' }}>  
           {rows.map(doc => {
             const c = sc(doc.latestStatus);
             const isExp = expanded === doc._id;
@@ -201,6 +227,7 @@ export function CommandHistoryTable() {
                       >
                         🗑 Xóa
                       </button>
+                      
                     </div>
 
                     <div
