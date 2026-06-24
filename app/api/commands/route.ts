@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
     const limitParam = searchParams.get('limit');
-    const limit = limitParam ? Math.min(Math.max(parseInt(limitParam, 10) || 0, 1), 200) : 50;
+    const limit = limitParam ? Math.min(Math.max(parseInt(limitParam, 10) || 0, 1), 200) : 200;
 
     const query: Record<string, any> = {};
     if (status) query.latestStatus = status;
