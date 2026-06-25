@@ -70,6 +70,17 @@ const lowBatteryNotifiedRef = useRef(false);
                   try {
           const parsed: BatteryStatus = JSON.parse(payload);
           setBatteryStatus(parsed);
+          fetch('/api/battery/ingest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              voltage:  parsed.voltage,
+              current:  parsed.current,
+              soc:      parsed.soc,
+              power:    parsed.power,
+              charging: parsed.charging,
+            }),
+          }).catch(err => console.error('❌ Ingest battery lỗi:', err));
         // ── Phát hiện pin yếu ──
                   if (parsed.soc < 20) {
                     if (!lowBatteryNotifiedRef.current) {
