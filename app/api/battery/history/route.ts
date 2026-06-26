@@ -11,14 +11,13 @@ export async function GET(req: NextRequest) {
 
     const docs = await BatteryTelemetry
       .find({ robotId: 'robot_01' })
-      .sort({ timestamp: -1 })       // mới nhất trước
+      .sort({ timestamp: -1 })
       .limit(points)
       .select('timestamp voltage current soc -_id')
       .lean();
 
-    // Đảo lại để chart hiển thị trái → phải theo thời gian
     const data = docs.reverse().map((d: any) => ({
-      time:    new Date(d.timestamp).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+      ts:      new Date(d.timestamp).getTime(),   // ← số ms, dùng cho XAxis
       voltage: parseFloat(d.voltage.toFixed(3)),
       current: parseFloat(d.current.toFixed(3)),
       soc:     d.soc,
