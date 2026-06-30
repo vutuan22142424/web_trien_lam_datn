@@ -140,7 +140,7 @@ function BatteryChartPanel() {
           </div>
 
           <div className="mt-4 flex-1">
-            <BatteryChart compact />
+            <BatteryChart compact defaultHours={0.083}/>
           </div>
         </div>
       </ShellPanel>

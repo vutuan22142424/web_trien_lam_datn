@@ -10,7 +10,7 @@ const news = [
     category: 'Tin tức',
     title: 'Future Consumer Expo 2026 thu hút hơn 50.000 lượt đăng ký tham quan',
     excerpt: 'Sự kiện triển lãm ảo đầu tiên về ngành hàng tiêu dùng tại Việt Nam đã vượt mốc 50.000 lượt đăng ký.',
-  },
+  },      
   {
     image: '/images/cocacola-booth.png',
     date: '08/06/2026',
@@ -53,7 +53,7 @@ export function NewsSection() {
                 />
                 <div className="absolute left-3 top-3">
                   <span className="rounded-full bg-blue-600 px-2.5 py-1 text-[10px] font-black text-white shadow-[0_10px_24px_rgba(37,99,235,0.2)]">
-                    {item.category}
+
                   </span>
                 </div>
               </div>
