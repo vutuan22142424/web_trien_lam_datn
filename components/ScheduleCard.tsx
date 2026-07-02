@@ -30,7 +30,7 @@ export default function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCar
     <Card className="border-0 bg-white p-4 shadow-sm transition-shadow hover:shadow-md sm:p-6">
       <div className="grid gap-4 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:items-start">
         {/* Colored dot indicator with icon */}
-        <div
+        <div // hiện icon
           className="w-10 h-10 rounded-full flex items-center justify-center text-white flex-shrink-0"
           style={{ backgroundColor: schedule.accent }}
         >
@@ -49,7 +49,7 @@ export default function ScheduleCard({ schedule, onEdit, onDelete }: ScheduleCar
           )}
         </div>
 
-        {/* Action buttons */}
+        {/* Action buttons nút sửa và xóa*/} 
         <div className="flex gap-2 pl-14 sm:pl-0">
           <Button
             size="sm"

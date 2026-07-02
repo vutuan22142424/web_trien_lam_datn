@@ -45,7 +45,7 @@ export default function AdminDashboard() {
       charging_state: batteryStatus
         ? (batteryStatus.charging ? 'CHARGING' : 'DISCHARGING')
         : robotStatic.telemetry.battery.charging_state,
-      charging:       batteryStatus?.charging ?? robotStatic.telemetry.battery.charging,
+      charging:       batteryStatus?.charging ?? robotStatic.telemetry.battery.charging, //Dùng trong logic if/ternary để quyết định style (màu sắc, icon) một cách gọn gàng, không cần so sánh chuỗi
     },
   },
     position: pose
